@@ -1,5 +1,7 @@
 package engine;
 
+import game.GameInfo;
+
 // This class manages the main thread that the game is running on
 public class Engine implements Runnable, EngineInterface {
 
@@ -84,7 +86,9 @@ public class Engine implements Runnable, EngineInterface {
             }
 
             if(System.currentTimeMillis() - fpsTimer >= 1000) {
-                // TODO: Update fps and tps to game info
+                // Update fps and tps to game info
+                GameInfo.FPS = fps;
+                GameInfo.TPS = tps;
 
                 if(printFps) {
                     System.out.println("FPS: " + fps + " TPS: " + tps);
