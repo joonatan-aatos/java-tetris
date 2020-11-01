@@ -5,14 +5,13 @@ import static org.lwjgl.opengles.GLES32.*;
 
 import java.nio.FloatBuffer;
 
-import logic.World;
 import org.lwjgl.opengles.GLES;
 import org.lwjgl.system.MemoryUtil;
 
 // This class is responsible for rendering stuff on the screen
 public class Renderer {
 
-	private Window window;
+	private final Window window;
 	private ShaderProgram shaderProgram;
 	private int vaoID;
 	private int vboID;
@@ -99,7 +98,7 @@ public class Renderer {
 		glBindVertexArray(0);
 	}
 
-	public void render(World world) {
+	public void render() {
 
 		// Clear the frame buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

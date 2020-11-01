@@ -44,7 +44,7 @@ public class Visualizer {
     public void update(World world) {
 
         if(!window.shouldClose()) {
-            renderer.render(world);
+            renderer.render();
         }
         else {
             stop();

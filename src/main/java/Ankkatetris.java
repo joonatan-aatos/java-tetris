@@ -3,8 +3,8 @@ import game.Game;
 
 public class Ankkatetris {
 
-    private Engine engine;
-    private Game game;
+    private final Engine engine;
+    private final Game game;
 
     public Ankkatetris() {
         // Initialize a game and an engine

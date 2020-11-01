@@ -12,8 +12,8 @@ public class Game implements GameInterface, VisualizerToGameInterface {
     // An interface for using the engine
     private EngineInterface engineInterface;
 
-    private Visualizer visualizer;
-    private World world;
+    private final Visualizer visualizer;
+    private final World world;
 
     /**
      * Create a new game

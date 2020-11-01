@@ -14,7 +14,7 @@ import org.lwjgl.system.MemoryStack;
 public class Window {
 
 	private long window;
-	private String title;
+	private final String title;
 	private int width;
 	private int height;
 	private boolean resized = true;

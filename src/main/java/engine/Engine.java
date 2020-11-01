@@ -18,7 +18,7 @@ public class Engine implements Runnable, EngineInterface {
     private int desiredFPS;
 
     // An interface for invoking call back functions
-    private GameInterface gameInterface;
+    private final GameInterface gameInterface;
 
     /**
      * Create an engine
@@ -43,8 +43,8 @@ public class Engine implements Runnable, EngineInterface {
         int tps = 0;
 
         // Calculate how much time is between each render/update
-        double nsPerTick = desiredTPS == 0 ? 0 : 1000000000 / desiredTPS;
-        double nsPerFrame = desiredFPS == 0 ? 0 : 1000000000 / desiredFPS;
+        double nsPerTick = desiredTPS == 0 ? 0 : 1000000000d / desiredTPS;
+        double nsPerFrame = desiredFPS == 0 ? 0 : 1000000000d / desiredFPS;
         // Store the current time in a variable
         double then = System.nanoTime();
         double now;
@@ -143,7 +143,7 @@ public class Engine implements Runnable, EngineInterface {
     }
 
     /**
-     * @param print
+     * @param print True: Print fps and tps. False: Don't print fps and tps.
      */
     @Override
     public void printFps(boolean print) {
