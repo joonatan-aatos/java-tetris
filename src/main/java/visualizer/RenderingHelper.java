@@ -21,8 +21,18 @@ public class RenderingHelper {
         renderer.draw();
     }
 
+    float rotation = 0f;
+
     private void drawStage(World world) {
 
-        renderer.drawTriangle(new float[]{-0.5f, -0.5f, 0f, -0.5f, 0.5f, 0f, 0.5f, -0.5f, 0f}, 0);
+        rotation += 0.02f;
+        if(rotation >= 2*Math.PI)
+            rotation = 0;
+
+        renderer.drawTriangle(
+                new float[]{-0.5f, -0.5f, 0f, -0.5f, 0.5f, 0f, 0.5f, -0.5f, 0f},
+                rotation,
+                new float[]{1f, 0f, 1f, 1f}
+        );
     }
 }

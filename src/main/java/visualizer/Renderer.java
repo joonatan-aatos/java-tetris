@@ -16,6 +16,23 @@ public class Renderer {
 	private ShaderProgram triangleShaderProgram;
 	private int triangleVaoID;
 	private int triangleVboID;
+	private int spriteVaoID;
+	private int spriteVboID;
+
+	private final float[] triangleVertices = new float[] {
+			-0.5f, -0.5f, 0f,
+			0f, 0.5f, 0f,
+			0.5f, -0.5f, 0f
+	};
+
+	private final float[] spriteVertices = new float[] {
+			-1f, -1f, 0f,
+			-1f, 1f, 0f,
+			1f, -1f, 0f,
+			-1f, 1f, 0f,
+			1f, -1f, 0f,
+			1f, 1f, 0f
+	};
 
 	public Renderer(Window window) throws Exception {
 		this.window = window;
@@ -41,16 +58,11 @@ public class Renderer {
 		triangleShaderProgram.createFragmentShader("src/main/glsl/triangle_fragment.glsl");
 		triangleShaderProgram.link();
 
-		// Define vertices for triangle vbo
-		float[] triangleVertices = new float[] {
-				-0.5f, -0.5f, 0f,
-				0f, 0.5f, 0f,
-				0.5f, -0.5f, 0f
-		};
+		// Triangle VBO
 
 		// Create float buffer
-		FloatBuffer verticesBuffer = MemoryUtil.memAllocFloat(triangleVertices.length);
-		verticesBuffer.put(triangleVertices).flip();
+		FloatBuffer triangleVerticesBuffer = MemoryUtil.memAllocFloat(triangleVertices.length);
+		triangleVerticesBuffer.put(triangleVertices).flip();
 
 		// Create VAO
 		triangleVaoID = glGenVertexArrays();
@@ -59,8 +71,8 @@ public class Renderer {
 		// Create VBO
 		triangleVboID = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, triangleVboID);
-		glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-		MemoryUtil.memFree(verticesBuffer);
+		glBufferData(GL_ARRAY_BUFFER, triangleVerticesBuffer, GL_STATIC_DRAW);
+		MemoryUtil.memFree(triangleVerticesBuffer);
 
 		// Define the structure of the data and store it in one of the attribute lists of the VAO
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
@@ -70,6 +82,32 @@ public class Renderer {
 
 		// Unbind the VAO
 		glBindVertexArray(0);
+		
+		// Sprite VBO
+
+		// Create float buffer
+		FloatBuffer spriteVerticesBuffer = MemoryUtil.memAllocFloat(spriteVertices.length);
+		spriteVerticesBuffer.put(spriteVertices).flip();
+
+		// Create VAO
+		spriteVaoID = glGenVertexArrays();
+		glBindVertexArray(spriteVaoID);
+
+		// Create VBO
+		spriteVboID = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, spriteVboID);
+		glBufferData(GL_ARRAY_BUFFER, spriteVerticesBuffer, GL_STATIC_DRAW);
+		MemoryUtil.memFree(spriteVerticesBuffer);
+
+		// Define the structure of the data and store it in one of the attribute lists of the VAO
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+
+		// Unbind the VBO
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		// Unbind the VAO
+		glBindVertexArray(0);
+
 	}
 
 	/**
@@ -101,7 +139,7 @@ public class Renderer {
 	/**
 	 * Draw a triangle at the given coordinates with the given color
 	 */
-	public void drawTriangle(float[] coords, float rotationAngle) {
+	public void drawTriangle(float[] coords, float rotationAngle, float[] color) {
 
 		// Bind to a shader program
 		triangleShaderProgram.bind();
@@ -119,9 +157,13 @@ public class Renderer {
 		glBindVertexArray(triangleVaoID);
 		glEnableVertexAttribArray(0);
 
-		// Set uniforms
+		// Set rotation uniform
 		int rotationUniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "angle");
 		glUniform1f(rotationUniformLocation, rotationAngle);
+
+		// Set color uniform
+		int colorUniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "color");
+		glUniform4fv(colorUniformLocation, color);
 
 		// Draw the vertices
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -135,10 +177,10 @@ public class Renderer {
 	}
 
 	/**
-	 * Draw a rectangle at the given coordinates with the given color
+	 * Draw an image at the given coordinates.
 	 */
-	public void drawRectangle() {
-
+	public void drawImage(int image, float xPos, float yPos, float width, float height, float rotationAngle) {
+		// TODO
 	}
 
 	public void cleanup() {
