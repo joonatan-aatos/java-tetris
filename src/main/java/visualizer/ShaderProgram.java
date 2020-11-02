@@ -1,5 +1,9 @@
 package visualizer;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static org.lwjgl.opengles.GLES32.*;
 
 public class ShaderProgram {
@@ -17,12 +21,15 @@ public class ShaderProgram {
 	}
 
 
-	public void createVertexShader(String shaderCode) throws Exception {
+	public void createVertexShader(String shaderCodePath) throws Exception {
+
+		String shaderCode = Files.readString(Paths.get(shaderCodePath));
 		vertexShaderId = createShader(shaderCode, GL_VERTEX_SHADER);
 	}
 
 
-	public void createFragmentShader(String shaderCode) throws Exception {
+	public void createFragmentShader(String shaderCodePath) throws Exception {
+		String shaderCode = Files.readString(Paths.get(shaderCodePath));
 		fragmentShaderId = createShader(shaderCode, GL_FRAGMENT_SHADER);
 	}
 

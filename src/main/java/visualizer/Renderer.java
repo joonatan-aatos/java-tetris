@@ -17,43 +17,6 @@ public class Renderer {
 	private int triangleVaoID;
 	private int triangleVboID;
 
-	//TODO: Fix vertex shader code
-	private final String TRIANGLE_VERTEX_SHADER_CODE = "" +
-			"\n" +
-			"#version 300 es\n" +
-			"\n" +
-			"uniform float angle;" +
-			"\n" +
-			"layout (location=0) in vec3 position;\n" +
-			"\n" +
-			"void main()\n" +
-			"{\n" +
-			"mat2 rotationMatrix;\n" +
-			"rotationMatrix[0][0] = cos(angle);\n" +
-			"rotationMatrix[0][1] = sin(angle);\n" +
-			"rotationMatrix[1][0] = -sin(angle);\n" +
-			"rotationMatrix[1][1] = cos(angle);\n" +
-			"\n" +
-			"vec2 newPosition = rotationMatrix * vec2(position.x, position.y);\n" +
-			"gl_Position = vec4(newPosition, position.z, 1.0);\n" +
-			"}\n" +
-			"\n";
-
-	private final String TRIANGLE_FRAGMENT_SHADER_CODE = ""
-			+ "\n"
-			+ "#version 300 es\n"
-			+ "\n"
-			+ "precision mediump float;\n"
-			+ "\n"
-			+ "out vec4 fragColor;\n"
-			+ "\n"
-			+ "void main()\n"
-			+ "{\n"
-			+ "fragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
-			+ "}\n"
-			+ "\n";
-
-
 	public Renderer(Window window) throws Exception {
 		this.window = window;
 		init();
@@ -74,8 +37,8 @@ public class Renderer {
 
 		// Create shader programs
 		triangleShaderProgram = new ShaderProgram();
-		triangleShaderProgram.createVertexShader(TRIANGLE_VERTEX_SHADER_CODE);
-		triangleShaderProgram.createFragmentShader(TRIANGLE_FRAGMENT_SHADER_CODE);
+		triangleShaderProgram.createVertexShader("src/main/glsl/triangle_vertex.glsl");
+		triangleShaderProgram.createFragmentShader("src/main/glsl/triangle_fragment.glsl");
 		triangleShaderProgram.link();
 
 		// Define vertices for triangle vbo

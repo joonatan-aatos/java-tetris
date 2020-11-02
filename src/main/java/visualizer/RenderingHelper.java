@@ -23,6 +23,6 @@ public class RenderingHelper {
 
     private void drawStage(World world) {
 
-        renderer.drawTriangle(new float[]{-1f, -1f, 0f, -1f, 1f, 0f, 1f, -1f, 0f}, 2);
+        renderer.drawTriangle(new float[]{-0.5f, -0.5f, 0f, -0.5f, 0.5f, 0f, 0.5f, -0.5f, 0f}, 0);
     }
 }
