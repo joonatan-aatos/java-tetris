@@ -22,11 +22,20 @@ public class Renderer {
 			"\n" +
 			"#version 300 es\n" +
 			"\n" +
+			"uniform float angle;" +
+			"\n" +
 			"layout (location=0) in vec3 position;\n" +
 			"\n" +
 			"void main()\n" +
 			"{\n" +
-			"gl_Position = vec4(position, 1.0);\n" +
+			"mat2 rotationMatrix;\n" +
+			"rotationMatrix[0][0] = cos(angle);\n" +
+			"rotationMatrix[0][1] = sin(angle);\n" +
+			"rotationMatrix[1][0] = -sin(angle);\n" +
+			"rotationMatrix[1][1] = cos(angle);\n" +
+			"\n" +
+			"vec2 newPosition = rotationMatrix * vec2(position.x, position.y);\n" +
+			"gl_Position = vec4(newPosition, position.z, 1.0);\n" +
 			"}\n" +
 			"\n";
 
@@ -129,22 +138,27 @@ public class Renderer {
 	/**
 	 * Draw a triangle at the given coordinates with the given color
 	 */
-	public void drawTriangle(float[] p1, float[] p2, float[] p3) {
+	public void drawTriangle(float[] coords, float rotationAngle) {
 
 		// Bind to a shader program
 		triangleShaderProgram.bind();
+
+		// Bind to the VBO to change VBO data
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVboID);
+
+		// Change VBO data to given coordinates
+		glBufferSubData(GL_ARRAY_BUFFER, 0, coords);
+
+		// Unbind VBO
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		// Bind to the VAO
 		glBindVertexArray(triangleVaoID);
 		glEnableVertexAttribArray(0);
 
-		// Set uniforms for given coordinates
-		int p1UniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "p1");
-		glUniform2fv(p1UniformLocation, p1);
-		int p2UniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "p2");
-		glUniform2fv(p2UniformLocation, p2);
-		int p3UniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "p3");
-		glUniform2fv(p3UniformLocation, p3);
+		// Set uniforms
+		int rotationUniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "angle");
+		glUniform1f(rotationUniformLocation, rotationAngle);
 
 		// Draw the vertices
 		glDrawArrays(GL_TRIANGLES, 0, 3);
