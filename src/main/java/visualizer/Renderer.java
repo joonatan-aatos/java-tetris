@@ -177,6 +177,30 @@ public class Renderer {
 	}
 
 	/**
+	 * Draw rectangle at given position
+	 */
+	public void drawRectangle(float xPos, float yPos, float width, float height, float[] color) {
+		drawTriangle(
+				new float[]{
+						xPos, yPos, 0f,
+						xPos, yPos-height, 0f,
+						xPos+width, yPos-height, 0f
+				},
+				0,
+				color
+		);
+		drawTriangle(
+				new float[] {
+						xPos, yPos, 0f,
+						xPos+width, yPos, 0f,
+						xPos+width, yPos-height, 0f
+				},
+				0,
+				color
+		);
+	}
+
+	/**
 	 * Draw an image at the given coordinates.
 	 */
 	public void drawImage(int image, float xPos, float yPos, float width, float height, float rotationAngle) {

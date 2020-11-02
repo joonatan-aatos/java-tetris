@@ -32,7 +32,7 @@ public class Visualizer {
         if ( !glfwInit() )
             throw new IllegalStateException("Unable to initialize GLFW");
 
-        window = new Window(GameInfo.TITLE, 500, 500);
+        window = new Window(GameInfo.TITLE, 800, 800);
 
         try {
             renderer = new Renderer(window);

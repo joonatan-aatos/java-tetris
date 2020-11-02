@@ -7,6 +7,8 @@ import logic.World;
 public class RenderingHelper {
 
     private final Renderer renderer;
+    private final float stageWidth = 0.9f;
+    private final float stageHeight = 1.8f;
 
     public RenderingHelper(Renderer renderer) {
         this.renderer = renderer;
@@ -21,18 +23,31 @@ public class RenderingHelper {
         renderer.draw();
     }
 
-    float rotation = 0f;
-
     private void drawStage(World world) {
 
-        rotation += 0.02f;
-        if(rotation >= 2*Math.PI)
-            rotation = 0;
-
-        renderer.drawTriangle(
-                new float[]{-0.5f, -0.5f, 0f, -0.5f, 0.5f, 0f, 0.5f, -0.5f, 0f},
-                rotation,
-                new float[]{1f, 0f, 1f, 1f}
+        // Black rectangle
+        renderer.drawRectangle(
+                -stageWidth/2,
+                stageHeight/2,
+                stageWidth,
+                stageHeight,
+                new float[]{0f, 0f, 0f, 1f}
         );
+
+        // Draw placed squares
+        int[][] placedSquares = world.getPlacedSquares();
+        for(int i = 0; i < placedSquares.length; i++) {
+            for(int j = 0; j < placedSquares[0].length; j++) {
+                if(placedSquares[i][j] == 1) {
+                    renderer.drawRectangle(
+                            -stageWidth/2+stageWidth/World.WORLD_WIDTH*j,
+                            -stageHeight/2+stageHeight/World.WORLD_HEIGHT*(i+1),
+                            stageWidth/World.WORLD_WIDTH,
+                            stageHeight/World.WORLD_HEIGHT,
+                            new float[]{1f, 1f, 1f, 1f}
+                    );
+                }
+            }
+        }
     }
 }
