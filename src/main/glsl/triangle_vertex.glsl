@@ -13,4 +13,4 @@ void main() {
 
     vec2 newPosition = rotationMatrix * vec2(position.x, position.y);
     gl_Position = vec4(newPosition, position.z, 1.0);
-} 
+}

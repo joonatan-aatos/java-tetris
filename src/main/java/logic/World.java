@@ -19,7 +19,7 @@ public class World {
         init();
 
         // Temporary
-        placedSquares[0][2] = 1;
+        placedSquares[1][5] = 1;
     }
 
     // Init
