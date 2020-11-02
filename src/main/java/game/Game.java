@@ -30,7 +30,7 @@ public class Game implements GameInterface, VisualizerToGameInterface {
 
     @Override
     public void update() {
-
+        world.tick();
     }
 
     @Override

@@ -13,6 +13,7 @@ public class Visualizer {
 
     private Window window;
     private Renderer renderer;
+    private RenderingHelper renderingHelper;
     private VisualizerToGameInterface gameInterface;
 
     public Visualizer(VisualizerToGameInterface gameInterface) {
@@ -39,12 +40,14 @@ public class Visualizer {
             e.printStackTrace();
             gameInterface.initFailed();
         }
+
+        renderingHelper = new RenderingHelper(renderer);
     }
 
     public void update(World world) {
 
         if(!window.shouldClose()) {
-            renderer.render();
+            renderingHelper.drawWorld(world);
         }
         else {
             stop();
