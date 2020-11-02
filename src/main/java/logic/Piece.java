@@ -21,9 +21,12 @@ public class Piece extends Sprite {
         fallTimer--;
         if(fallTimer == 0) {
             fallTimer = fallTime;
-//            fall();
-            shape = rotatePiece(shape);
+            fall();
         }
+    }
+
+    public void rotate() {
+        shape = shape = rotatePiece(shape);
     }
 
     private void fall() {

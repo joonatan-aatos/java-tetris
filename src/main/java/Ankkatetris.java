@@ -1,14 +1,17 @@
 import engine.Engine;
 import game.Game;
+import userInput.KeyListener;
 
 public class Ankkatetris {
 
     private final Engine engine;
     private final Game game;
+    private final KeyListener keyListener;
 
     public Ankkatetris() {
         // Initialize a game and an engine
-        game = new Game();
+        keyListener = new KeyListener();
+        game = new Game(keyListener);
         engine = new Engine(game);
 
         engine.setDesiredFPS(Engine.VSYNC);

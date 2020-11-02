@@ -54,6 +54,10 @@ public class Visualizer {
         }
     }
 
+    public Window getWindow() {
+        return window;
+    }
+
     private void stop() {
 
         gameInterface.windowClosed();

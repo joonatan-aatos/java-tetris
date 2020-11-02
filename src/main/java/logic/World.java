@@ -1,9 +1,11 @@
 package logic;
 
+import userInput.KeyListenerInterface;
+
 import java.util.ArrayList;
 
 // This class handles all the basic game logic and stores most of the relevant game objects
-public class World {
+public class World implements KeyListenerInterface {
 
     public static final int WORLD_WIDTH = 10;
     public static final int WORLD_HEIGHT = 20;
@@ -14,10 +16,13 @@ public class World {
     private ArrayList<Sprite> sprites;
     private int[][] placedSquares;
     private Piece currentPiece;
+    private WorldToGameInterface game;
 
-    public World() {
+    public World(WorldToGameInterface game) {
 
+        this.game = game;
         init();
+        game.addKeyListener(this);
     }
 
     // Init
@@ -47,7 +52,7 @@ public class World {
     }
 
     private void createNewPiece() {
-        currentPiece = new Piece(4*GRID_SIZE, 18*GRID_SIZE, Piece.PieceType.I);
+        currentPiece = new Piece(4*GRID_SIZE, 18*GRID_SIZE, Piece.PieceType.T);
         sprites.add(currentPiece);
     }
 
@@ -63,5 +68,13 @@ public class World {
      */
     public int[][] getPlacedSquares() {
         return placedSquares.clone();
+    }
+
+    @Override
+    public void onKeyPressed(int key, int action) {
+        if(action != 0) {
+            if(key == 265)
+                currentPiece.rotate();
+        }
     }
 }
