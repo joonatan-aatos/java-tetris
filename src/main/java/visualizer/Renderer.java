@@ -9,6 +9,7 @@ import org.lwjgl.opengles.GLES;
 import org.lwjgl.system.MemoryUtil;
 
 // This class is responsible for rendering stuff on the screen
+// This is also where most of the openGL code is located
 public class Renderer {
 
 	private final Window window;
