@@ -13,7 +13,7 @@ public class Ankkatetris {
 
         engine.setDesiredFPS(Engine.VSYNC);
         engine.setDesiredTPS(60);
-        engine.printFps(true);
+        engine.printFps(false);
     }
 
     public void start() {

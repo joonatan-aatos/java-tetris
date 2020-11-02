@@ -13,13 +13,11 @@ public class World {
     // List that stores all sprites
     private ArrayList<Sprite> sprites;
     private int[][] placedSquares;
+    private Piece currentPiece;
 
     public World() {
 
         init();
-
-        // Temporary
-        placedSquares[1][5] = 1;
     }
 
     // Init
@@ -34,14 +32,23 @@ public class World {
                 placedSquares[i][j] = 0;
             }
         }
+
+        currentPiece = null;
     }
 
     // Called every time the world should update
     public void tick() {
+        if(currentPiece == null)
+            createNewPiece();
         // Invoke tick() for every sprite
         for(Sprite sprite : sprites) {
             sprite.tick();
         }
+    }
+
+    private void createNewPiece() {
+        currentPiece = new Piece(4*GRID_SIZE, 18*GRID_SIZE, Piece.PieceType.I);
+        sprites.add(currentPiece);
     }
 
     /**
