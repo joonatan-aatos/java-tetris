@@ -6,6 +6,7 @@ public class Piece extends Sprite {
     private int fallTimer;
     private final int hardenTime;
     private int hardenTimer;
+    private final int fastFallSpeed;
     private PieceType type;
     private int[][] shape;
     private boolean fallFast;
@@ -21,6 +22,7 @@ public class Piece extends Sprite {
         fallTimer = fallTime;
         hardenTime = 60;
         hardenTimer = hardenTime;
+        fastFallSpeed = 5;
     }
 
     @Override
@@ -37,7 +39,7 @@ public class Piece extends Sprite {
         }
 
         if(fallTimer <= 0) {
-            fallTimer = fallFast ? fallTime / 15 : fallTime;
+            fallTimer = fallFast ? fastFallSpeed : fallTime;
             fall();
         }
     }
