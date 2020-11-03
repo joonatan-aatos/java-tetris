@@ -176,4 +176,8 @@ public class World {
     public int[][] getPlacedSquares() {
         return placedSquares.clone();
     }
+
+    public Piece.PieceType getNextPieceType() {
+        return currentPieceList.size() == 0 ? nextPieceList.get(0) : currentPieceList.get(0);
+    }
 }

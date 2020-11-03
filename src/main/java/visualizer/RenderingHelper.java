@@ -37,6 +37,8 @@ public class RenderingHelper {
     private final Renderer renderer;
     private final float stageWidth = 0.9f;
     private final float stageHeight = 1.8f;
+    private final float sideBoxWidth = 0.4f;
+    private final float sideBoxHeight = 0.5f;
 
     public RenderingHelper(Renderer renderer) {
         this.renderer = renderer;
@@ -47,6 +49,7 @@ public class RenderingHelper {
         renderer.reset();
         // Draw
         drawStage(world.getPlacedSquares());
+        drawNextBlockBox(world.getNextPieceType());
         drawSprites(world.getSprites());
         // Swap color buffers
         renderer.draw();
@@ -55,9 +58,13 @@ public class RenderingHelper {
     private void drawSquare(int x, int y, int colorIndex) {
 
         float[] coords = convertSpriteCoords(x, y);
+        drawSquare(coords[0], coords[1], colorIndex);
+    }
+
+    private void drawSquare(float x, float y, int colorIndex) {
         renderer.drawRectangle(
-                coords[0],
-                coords[1],
+                x,
+                y,
                 stageWidth/World.WORLD_WIDTH,
                 stageHeight/World.WORLD_HEIGHT,
                 pieceColors[colorIndex]
@@ -65,15 +72,15 @@ public class RenderingHelper {
 
         float[] brightenedColor = brightenedPieceColors[colorIndex];
         renderer.drawRectangle(
-                coords[0],
-                coords[1],
+                x,
+                y,
                 stageWidth/World.WORLD_WIDTH/10f,
                 stageHeight/World.WORLD_HEIGHT,
                 brightenedColor
         );
         renderer.drawRectangle(
-                coords[0],
-                coords[1],
+                x,
+                y,
                 stageWidth/World.WORLD_WIDTH,
                 stageHeight/World.WORLD_HEIGHT/10f,
                 brightenedColor
@@ -103,6 +110,57 @@ public class RenderingHelper {
                 }
             }
         }
+    }
+
+    private void drawNextBlockBox(PieceType nextPiece) {
+
+        // Draw another black rectangle for the next square box
+        renderer.drawRectangle(
+                stageWidth/2 + (1-(stageWidth/2))/2-sideBoxWidth/2,
+                0.8f,
+                sideBoxWidth,
+                sideBoxHeight,
+                new float[]{0f, 0f, 0f, 1f}
+        );
+
+        int[][] pieceShape = nextPiece.getShape();
+        // Center distance is 1 except in the O piece where it is 0
+        int centerDistance = 1;
+        if(pieceShape.length == 2) {
+            centerDistance = 0;
+        }
+
+        float positionFixX = 0f;
+        float positionFixY = 0f;
+
+        switch (nextPiece.getTypeIndex()) {
+            case 0: {
+                positionFixX = -stageWidth / World.WORLD_WIDTH / 2;
+                positionFixY = 0;
+                break;
+            }
+            case 1: {
+                positionFixX = -stageWidth / World.WORLD_WIDTH / 2;
+                positionFixY = -stageWidth / World.WORLD_WIDTH / 2;
+                break;
+            }
+            default: {
+                positionFixX = 0;
+                positionFixY = stageWidth / World.WORLD_WIDTH / 2;
+                break;
+            }
+        }
+
+        for(int i = 0; i < pieceShape.length; i++) {
+            for(int j = 0; j < pieceShape[0].length; j++) {
+                if(pieceShape[i][j] != 0) {
+                    drawSquare(stageWidth/2 + (1-(stageWidth/2))/2 - stageWidth/World.WORLD_WIDTH/2 + (j-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixX,
+                            0.8f-sideBoxHeight/2 + stageWidth/World.WORLD_WIDTH/2 + (i-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixY,
+                            nextPiece.getTypeIndex());
+                }
+            }
+        }
+
     }
 
     private void drawSprites(ArrayList<Sprite> sprites) {
