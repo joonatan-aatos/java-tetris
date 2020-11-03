@@ -130,21 +130,6 @@ public class RenderingHelper {
         }
     }
 
-    private float[] brightenColor(float[] color, float fraction) {
-        float r = color[0];
-        float g = color[1];
-        float b = color[2];
-        Color tempColor = new Color(r, g, b);
-
-        int red = (int) Math.round(Math.min(255, tempColor.getRed() + 255 * fraction));
-        int green = (int) Math.round(Math.min(255, tempColor.getGreen() + 255 * fraction));
-        int blue = (int) Math.round(Math.min(255, tempColor.getBlue() + 255 * fraction));
-
-        float[] newColor = new Color(red, green, blue).getRGBColorComponents(null);
-
-        return new float[]{newColor[0], newColor[1], newColor[2], color[3]};
-    }
-
     private float[] convertSpriteCoords(int x, int y) {
         return new float[] {
                 -stageWidth / 2f + (stageWidth / World.WORLD_WIDTH * ((float) x / World.GRID_SIZE)),
