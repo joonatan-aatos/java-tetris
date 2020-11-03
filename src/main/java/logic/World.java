@@ -153,7 +153,7 @@ public class World {
                             y >= 0 && y < WORLD_HEIGHT*GRID_SIZE &&
                             placedSquares[y/GRID_SIZE][x/GRID_SIZE] == 0) {
 
-                        placedSquares[y/GRID_SIZE][x/GRID_SIZE] = 1;
+                        placedSquares[y/GRID_SIZE][x/GRID_SIZE] = piece.getPieceType().getTypeIndex()+1;
                     }
                 }
             }

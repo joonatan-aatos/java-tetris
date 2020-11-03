@@ -50,7 +50,7 @@ public class Renderer {
 		GLES.createCapabilities();
 
 		// Set the clear color
-		glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
+		glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
 
 		// Create shader programs
 		triangleShaderProgram = new ShaderProgram();

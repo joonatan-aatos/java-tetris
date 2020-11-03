@@ -11,6 +11,16 @@ import java.util.ArrayList;
 // It mostly uses the low level functions provided by the Renderer class
 public class RenderingHelper {
 
+    private final float[][] pieceColors = new float[][]{
+            {0f, 1f, 1f, 1f},
+            {1f, 1f, 0f, 1f},
+            {0.5f, 0f, 0.5f, 1f},
+            {0f, 1f, 0f, 1f},
+            {1f, 0f, 0f, 1f},
+            {0f, 0f, 1f, 1f},
+            {1f, 0.65f, 0, 1f}
+    };
+
     private final Renderer renderer;
     private final float stageWidth = 0.9f;
     private final float stageHeight = 1.8f;
@@ -43,13 +53,13 @@ public class RenderingHelper {
         // Draw placed squares
         for(int i = 0; i < placedSquares.length; i++) {
             for(int j = 0; j < placedSquares[0].length; j++) {
-                if(placedSquares[i][j] == 1) {
+                if(placedSquares[i][j] != 0) {
                     renderer.drawRectangle(
                             -stageWidth/2+stageWidth/World.WORLD_WIDTH*j,
                             -stageHeight/2+stageHeight/World.WORLD_HEIGHT*(i+1),
                             stageWidth/World.WORLD_WIDTH,
                             stageHeight/World.WORLD_HEIGHT,
-                            new float[]{1f, 1f, 1f, 1f}
+                            pieceColors[placedSquares[i][j]-1]
                     );
                 }
             }
@@ -79,7 +89,7 @@ public class RenderingHelper {
                                     coords[1],
                                     stageWidth/World.WORLD_WIDTH,
                                     stageHeight/World.WORLD_HEIGHT,
-                                    new float[]{1f, 0f, 0f, 1f}
+                                    pieceColors[piece.getPieceType().getTypeIndex()]
                             );
                         }
                     }
