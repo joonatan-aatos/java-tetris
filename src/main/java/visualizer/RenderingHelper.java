@@ -5,7 +5,10 @@ import logic.Piece.PieceType;
 import logic.Sprite;
 import logic.World;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 // This class has more high level interface for drawing the game
 // It mostly uses the low level functions provided by the Renderer class
@@ -18,7 +21,17 @@ public class RenderingHelper {
             {0f, 1f, 0f, 1f},
             {1f, 0f, 0f, 1f},
             {0f, 0f, 1f, 1f},
-            {1f, 0.65f, 0, 1f}
+            {1f, 0.5f, 0, 1f}
+    };
+
+    private final float[][] brightenedPieceColors = new float[][]{
+            {0.6f, 1f, 1f, 1f},
+            {1f, 1f, 0.6f, 1f},
+            {0.7f, 0f, 0.7f, 1f},
+            {0.5f, 1f, 0.5f, 1f},
+            {1f, 0.4f, 0.4f, 1f},
+            {0.4f, 0.4f, 1f, 1f},
+            {1f, 0.6f, 0.4f, 1f}
     };
 
     private final Renderer renderer;
@@ -39,6 +52,34 @@ public class RenderingHelper {
         renderer.draw();
     }
 
+    private void drawSquare(int x, int y, int colorIndex) {
+
+        float[] coords = convertSpriteCoords(x, y);
+        renderer.drawRectangle(
+                coords[0],
+                coords[1],
+                stageWidth/World.WORLD_WIDTH,
+                stageHeight/World.WORLD_HEIGHT,
+                pieceColors[colorIndex]
+        );
+
+        float[] brightenedColor = brightenedPieceColors[colorIndex];
+        renderer.drawRectangle(
+                coords[0],
+                coords[1],
+                stageWidth/World.WORLD_WIDTH/10f,
+                stageHeight/World.WORLD_HEIGHT,
+                brightenedColor
+        );
+        renderer.drawRectangle(
+                coords[0],
+                coords[1],
+                stageWidth/World.WORLD_WIDTH,
+                stageHeight/World.WORLD_HEIGHT/10f,
+                brightenedColor
+        );
+    }
+
     private void drawStage(int[][] placedSquares) {
 
         // Black rectangle
@@ -54,12 +95,10 @@ public class RenderingHelper {
         for(int i = 0; i < placedSquares.length; i++) {
             for(int j = 0; j < placedSquares[0].length; j++) {
                 if(placedSquares[i][j] != 0) {
-                    renderer.drawRectangle(
-                            -stageWidth/2+stageWidth/World.WORLD_WIDTH*j,
-                            -stageHeight/2+stageHeight/World.WORLD_HEIGHT*(i+1),
-                            stageWidth/World.WORLD_WIDTH,
-                            stageHeight/World.WORLD_HEIGHT,
-                            pieceColors[placedSquares[i][j]-1]
+                    drawSquare(
+                            j*World.GRID_SIZE,
+                            (i+1)*World.GRID_SIZE,
+                            placedSquares[i][j]-1
                     );
                 }
             }
@@ -83,19 +122,27 @@ public class RenderingHelper {
                         if(pieceShape[i][j] != 0) {
                             int x = sprite.getxPos() + (j - centerDistance) * World.GRID_SIZE;
                             int y = sprite.getyPos() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
-                            float[] coords = convertSpriteCoords(x, y);
-                            renderer.drawRectangle(
-                                    coords[0],
-                                    coords[1],
-                                    stageWidth/World.WORLD_WIDTH,
-                                    stageHeight/World.WORLD_HEIGHT,
-                                    pieceColors[piece.getPieceType().getTypeIndex()]
-                            );
+                            drawSquare(x, y, piece.getPieceType().getTypeIndex());
                         }
                     }
                 }
             }
         }
+    }
+
+    private float[] brightenColor(float[] color, float fraction) {
+        float r = color[0];
+        float g = color[1];
+        float b = color[2];
+        Color tempColor = new Color(r, g, b);
+
+        int red = (int) Math.round(Math.min(255, tempColor.getRed() + 255 * fraction));
+        int green = (int) Math.round(Math.min(255, tempColor.getGreen() + 255 * fraction));
+        int blue = (int) Math.round(Math.min(255, tempColor.getBlue() + 255 * fraction));
+
+        float[] newColor = new Color(red, green, blue).getRGBColorComponents(null);
+
+        return new float[]{newColor[0], newColor[1], newColor[2], color[3]};
     }
 
     private float[] convertSpriteCoords(int x, int y) {
