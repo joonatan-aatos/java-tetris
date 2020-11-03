@@ -74,15 +74,42 @@ public class Piece extends Sprite {
         fallTimer = 0;
     }
 
-    private void fall() {
-        if(canBeInPosition(xPos, yPos - 10, shape))
+    /**
+     * Fall down one square
+     * @return true if the piece could fall
+     */
+    private boolean fall() {
+        if(canBeInPosition(xPos, yPos - 10, shape)) {
             yPos -= 10;
+            return true;
+        }
+        return false;
     }
 
+    /**
+     * Fall all the way down and harden
+     */
+    protected void fallDown() {
+        // Fall until it's not possible
+        while(fall());
+        // Harden
+        harden();
+    }
+
+    /**
+     * Turn into stone
+     */
     private void harden() {
         world.hardenAPiece(this);
     }
 
+    /**
+     * Check if the piece can be in the given position
+     * @param newX X-coordinate
+     * @param newY Y-coordinate
+     * @param newShape Piece's shape
+     * @return true if the piece can be in the given position
+     */
     private boolean canBeInPosition(int newX, int newY, int[][] newShape) {
 
         // Center distance is 1 except in the O-piece
@@ -96,9 +123,8 @@ public class Piece extends Sprite {
                 if(newShape[i][j] != 0) {
                     int x = newX + (j - centerDistance) * World.GRID_SIZE;
                     int y = newY + ((newShape.length - i - 1) - centerDistance) * World.GRID_SIZE;
-                    if(x < 0 || x >= World.WORLD_WIDTH*World.GRID_SIZE ||
-                            y < 0 || y >= World.WORLD_HEIGHT*World.GRID_SIZE ||
-                            world.getPlacedSquares()[y/World.GRID_SIZE][x/World.GRID_SIZE] != 0) {
+                    if(x < 0 || x >= World.WORLD_WIDTH*World.GRID_SIZE || y < 0 ||
+                            (y < World.WORLD_HEIGHT*World.GRID_SIZE && world.getPlacedSquares()[y/World.GRID_SIZE][x/World.GRID_SIZE] != 0)) {
                         return false;
                     }
                 }
@@ -107,41 +133,46 @@ public class Piece extends Sprite {
         return true;
     }
 
-    private int[][] rotatePiece(int[][] piece) {
+    /**
+     * Rotate the piece 90 degrees
+     * @param currentShape the current shape of the piece
+     * @return the rotated version of the piece
+     */
+    private int[][] rotatePiece(int[][] currentShape) {
 
-        int[][] newPiece = new int[piece.length][piece[0].length];
+        int[][] newPiece = new int[currentShape.length][currentShape[0].length];
 
-        if(piece.length == 2) {
-            return piece;
+        if(currentShape.length == 2) {
+            return currentShape;
         }
-        else if(piece.length == 3) {
-            newPiece[0][0] = piece[2][0];
-            newPiece[0][1] = piece[1][0];
-            newPiece[0][2] = piece[0][0];
-            newPiece[1][2] = piece[0][1];
-            newPiece[2][2] = piece[0][2];
-            newPiece[2][1] = piece[1][2];
-            newPiece[2][0] = piece[2][2];
-            newPiece[1][0] = piece[2][1];
-            newPiece[1][1] = piece[1][1];
+        else if(currentShape.length == 3) {
+            newPiece[0][0] = currentShape[2][0];
+            newPiece[0][1] = currentShape[1][0];
+            newPiece[0][2] = currentShape[0][0];
+            newPiece[1][2] = currentShape[0][1];
+            newPiece[2][2] = currentShape[0][2];
+            newPiece[2][1] = currentShape[1][2];
+            newPiece[2][0] = currentShape[2][2];
+            newPiece[1][0] = currentShape[2][1];
+            newPiece[1][1] = currentShape[1][1];
         }
         else {
-            newPiece[0][0] = piece[3][0];
-            newPiece[0][1] = piece[2][0];
-            newPiece[0][2] = piece[1][0];
-            newPiece[0][3] = piece[0][0];
-            newPiece[1][3] = piece[0][1];
-            newPiece[2][3] = piece[0][2];
-            newPiece[3][3] = piece[0][3];
-            newPiece[3][2] = piece[1][3];
-            newPiece[3][1] = piece[2][3];
-            newPiece[3][0] = piece[3][3];
-            newPiece[2][0] = piece[3][2];
-            newPiece[1][0] = piece[3][1];
-            newPiece[1][1] = piece[2][1];
-            newPiece[1][2] = piece[1][1];
-            newPiece[2][2] = piece[1][2];
-            newPiece[2][1] = piece[2][2];
+            newPiece[0][0] = currentShape[3][0];
+            newPiece[0][1] = currentShape[2][0];
+            newPiece[0][2] = currentShape[1][0];
+            newPiece[0][3] = currentShape[0][0];
+            newPiece[1][3] = currentShape[0][1];
+            newPiece[2][3] = currentShape[0][2];
+            newPiece[3][3] = currentShape[0][3];
+            newPiece[3][2] = currentShape[1][3];
+            newPiece[3][1] = currentShape[2][3];
+            newPiece[3][0] = currentShape[3][3];
+            newPiece[2][0] = currentShape[3][2];
+            newPiece[1][0] = currentShape[3][1];
+            newPiece[1][1] = currentShape[2][1];
+            newPiece[1][2] = currentShape[1][1];
+            newPiece[2][2] = currentShape[1][2];
+            newPiece[2][1] = currentShape[2][2];
 
         }
 
@@ -157,6 +188,7 @@ public class Piece extends Sprite {
     }
 
     public enum PieceType {
+
         I(new int[][]{
                 {0, 0, 0, 0},
                 {1, 1, 1, 1},

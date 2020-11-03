@@ -3,6 +3,8 @@ package logic;
 import userInput.KeyListenerInterface;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 // This class handles all the basic game logic and stores most of the relevant game objects
 public class World {
@@ -12,6 +14,16 @@ public class World {
     // Coordinates between two adjacent squares
     public static final int GRID_SIZE = 10;
 
+    private final Piece.PieceType[] pieceTypes = new Piece.PieceType[]{
+            Piece.PieceType.I,
+            Piece.PieceType.J,
+            Piece.PieceType.L,
+            Piece.PieceType.O,
+            Piece.PieceType.S,
+            Piece.PieceType.T,
+            Piece.PieceType.Z,
+    };
+
     // List that stores all sprites
     private ArrayList<Sprite> sprites;
     private ArrayList<Sprite> spritesToRemove;
@@ -19,6 +31,8 @@ public class World {
     private Piece currentPiece;
     private TetrisPlayer tetrisPlayer;
     private WorldToGameInterface game;
+    private ArrayList<Piece.PieceType> currentPieceList;
+    private ArrayList<Piece.PieceType> nextPieceList;
 
     public World(WorldToGameInterface game) {
 
@@ -44,6 +58,11 @@ public class World {
         currentPiece = null;
 
         tetrisPlayer = new TetrisPlayer();
+
+        currentPieceList = new ArrayList<Piece.PieceType>(Arrays.asList(pieceTypes));
+        nextPieceList = new ArrayList<Piece.PieceType>(Arrays.asList(pieceTypes));
+        Collections.shuffle(currentPieceList);
+        Collections.shuffle(nextPieceList);
     }
 
     // Called every time the world should update
@@ -60,12 +79,59 @@ public class World {
             sprites.remove(sprite);
         }
         spritesToRemove.clear();
+
+        checkForCompleteRows();
+    }
+
+    private void checkForCompleteRows() {
+        for(int i = placedSquares.length - 1; i >= 0; i--) {
+            for(int j = 0; j < placedSquares[0].length; j++) {
+                if(placedSquares[i][j] == 0)
+                    break;
+
+                if(j == placedSquares[0].length-1) {
+                    // Row is complete
+                    removeRow(i);
+                    // Check the same row again
+                    i++;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Remove a row
+    private void removeRow(int height) {
+
+        int[][] newPlacedSquares = new int[placedSquares.length][placedSquares[0].length];
+
+        for(int i = 0; i < placedSquares.length-1; i++) {
+            if(i >= height) {
+                newPlacedSquares[i] = placedSquares[i+1];
+            }
+            else {
+                newPlacedSquares[i] = placedSquares[i];
+            }
+        }
+
+        // Empty the top row
+        for(int i = 0; i < newPlacedSquares[0].length; i++) {
+            newPlacedSquares[newPlacedSquares.length-1][i] = 0;
+        }
+
+        placedSquares = newPlacedSquares;
     }
 
     private void createNewPiece() {
-        currentPiece = new Piece(4*GRID_SIZE, 18*GRID_SIZE, Piece.PieceType.T, this);
+        currentPiece = new Piece(4*GRID_SIZE, 19*GRID_SIZE, currentPieceList.remove(0), this);
         sprites.add(currentPiece);
         tetrisPlayer.updateCurrentPiece(currentPiece);
+
+        if(currentPieceList.size() == 0) {
+            currentPieceList = nextPieceList;
+            nextPieceList = new ArrayList<Piece.PieceType>(Arrays.asList(pieceTypes));
+            Collections.shuffle(nextPieceList);
+        }
     }
 
     protected void hardenAPiece(Piece piece) {

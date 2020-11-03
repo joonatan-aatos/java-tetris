@@ -41,5 +41,11 @@ public class TetrisPlayer implements KeyListenerInterface {
                 currentPiece.move(key == 262);
             }
         }
+        // Space
+        else if(key == 32) {
+            if(action == 1) {
+                currentPiece.fallDown();
+            }
+        }
     }
 }
