@@ -224,46 +224,4 @@ public class Renderer {
 		glBindVertexArray(0);
 		glDeleteVertexArrays(triangleVaoID);
 	}
-
-	/*
-	// This was for testing
-	public void render() {
-
-		// Clear the frame buffer
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Resize the viewport if necessary
-		if(window.isResized()) {
-			glViewport(0, 0, window.getWidth(), window.getHeight());
-			window.setResized(true);
-		}
-
-		// Bind to a shader program
-		shaderProgram.bind();
-
-		// Bind to the VAO
-		glBindVertexArray(triangleVaoID);
-		glEnableVertexAttribArray(0);
-
-		// Set a uniform
-		int uniformLocation = glGetUniformLocation(shaderProgram.getProgramId(), "rotationAngle");
-		glUniform1f(uniformLocation, 0f);
-
-		// Draw the vertices
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		// Restore state
-		glDisableVertexAttribArray(0);
-		glBindVertexArray(0);
-
-		// Unbind from the shader program
-		shaderProgram.unbind();
-
-		// Swap the color buffers
-		window.swapBuffers();
-		// Poll for window events.
-		// The key callback above will only be invoked during this call.
-		glfwPollEvents();
-	}
-	 */
 }
