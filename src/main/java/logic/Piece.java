@@ -76,6 +76,14 @@ public class Piece extends Sprite {
         fallTimer = 0;
     }
 
+    public int getGhostBlockHeight() {
+        int height = yPos;
+        while(canBeInPosition(xPos, height - 10, shape)) {
+            height -= 10;
+        }
+        return height;
+    }
+
     /**
      * Fall down one square
      * @return true if the piece could fall

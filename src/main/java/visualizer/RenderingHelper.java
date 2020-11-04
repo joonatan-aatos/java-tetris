@@ -55,22 +55,41 @@ public class RenderingHelper {
         renderer.draw();
     }
 
-    private void drawSquare(int x, int y, int colorIndex) {
+    private void drawSquare(int x, int y, int colorIndex, boolean ghostBlock) {
 
         float[] coords = convertSpriteCoords(x, y);
-        drawSquare(coords[0], coords[1], colorIndex);
+        drawSquare(coords[0], coords[1], colorIndex, ghostBlock);
     }
 
-    private void drawSquare(float x, float y, int colorIndex) {
+    private void drawSquare(float x, float y, int colorIndex, boolean ghostBlock) {
+
+        if(ghostBlock) {
+
+            float[] color = pieceColors[colorIndex].clone();
+            color[3] = 0.1f;
+
+            renderer.drawRectangle(
+                    x,
+                    y,
+                    stageWidth/World.WORLD_WIDTH,
+                    stageHeight/World.WORLD_HEIGHT,
+                    color
+            );
+            return;
+        }
+
+        float[] color = pieceColors[colorIndex];
+
         renderer.drawRectangle(
                 x,
                 y,
                 stageWidth/World.WORLD_WIDTH,
                 stageHeight/World.WORLD_HEIGHT,
-                pieceColors[colorIndex]
+                color
         );
 
         float[] brightenedColor = brightenedPieceColors[colorIndex];
+
         renderer.drawRectangle(
                 x,
                 y,
@@ -105,7 +124,8 @@ public class RenderingHelper {
                     drawSquare(
                             j*World.GRID_SIZE,
                             (i+1)*World.GRID_SIZE,
-                            placedSquares[i][j]-1
+                            placedSquares[i][j]-1,
+                            false
                     );
                 }
             }
@@ -151,7 +171,7 @@ public class RenderingHelper {
                 if(pieceShape[i][j] != 0) {
                     drawSquare(stageWidth/2 + (1-(stageWidth/2))/2 - stageWidth/World.WORLD_WIDTH/2 + (j-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixX,
                             0.8f-sideBoxHeight/2 + (pieceShape.length-1-i-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixY,
-                            nextPiece.getTypeIndex());
+                            nextPiece.getTypeIndex(), false);
                 }
             }
         }
@@ -173,9 +193,20 @@ public class RenderingHelper {
                 for(int i = 0; i < pieceShape.length; i++) {
                     for(int j = 0; j < pieceShape[0].length; j++) {
                         if(pieceShape[i][j] != 0) {
-                            int x = sprite.getxPos() + (j - centerDistance) * World.GRID_SIZE;
-                            int y = sprite.getyPos() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
-                            drawSquare(x, y, piece.getPieceType().getTypeIndex());
+                            int x = piece.getxPos() + (j - centerDistance) * World.GRID_SIZE;
+                            int y = piece.getyPos() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
+                            drawSquare(x, y, piece.getPieceType().getTypeIndex(), false);
+                        }
+                    }
+                }
+
+                // Draw ghost block
+                for(int i = 0; i < pieceShape.length; i++) {
+                    for(int j = 0; j < pieceShape[0].length; j++) {
+                        if(pieceShape[i][j] != 0) {
+                            int x = piece.getxPos() + (j - centerDistance) * World.GRID_SIZE;
+                            int y = piece.getGhostBlockHeight() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
+                            drawSquare(x, y, piece.getPieceType().getTypeIndex(), true);
                         }
                     }
                 }
