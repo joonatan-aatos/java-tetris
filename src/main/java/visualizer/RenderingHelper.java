@@ -136,17 +136,12 @@ public class RenderingHelper {
         switch (nextPiece.getTypeIndex()) {
             case 0: {
                 positionFixX = -stageWidth / World.WORLD_WIDTH / 2;
-                positionFixY = 0;
+                positionFixY = -stageWidth / World.WORLD_WIDTH / 2;
                 break;
             }
             case 1: {
                 positionFixX = -stageWidth / World.WORLD_WIDTH / 2;
-                positionFixY = -stageWidth / World.WORLD_WIDTH / 2;
-                break;
-            }
-            default: {
-                positionFixX = 0;
-                positionFixY = stageWidth / World.WORLD_WIDTH / 2;
+                positionFixY = 0;
                 break;
             }
         }
@@ -155,7 +150,7 @@ public class RenderingHelper {
             for(int j = 0; j < pieceShape[0].length; j++) {
                 if(pieceShape[i][j] != 0) {
                     drawSquare(stageWidth/2 + (1-(stageWidth/2))/2 - stageWidth/World.WORLD_WIDTH/2 + (j-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixX,
-                            0.8f-sideBoxHeight/2 + stageWidth/World.WORLD_WIDTH/2 + (i-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixY,
+                            0.8f-sideBoxHeight/2 + (pieceShape.length-1-i-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixY,
                             nextPiece.getTypeIndex());
                 }
             }
