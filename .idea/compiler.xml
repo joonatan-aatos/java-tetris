@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Tetris" />
         <module name="ankkatetris-3.0" />
+        <module name="tetris" />
       </profile>
     </annotationProcessing>
   </component>

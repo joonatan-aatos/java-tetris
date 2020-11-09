@@ -14,10 +14,12 @@ public class Renderer {
 
 	private final Window window;
 	private ShaderProgram triangleShaderProgram;
+	private ShaderProgram spriteShaderProgram;
 	private int triangleVaoID;
 	private int triangleVboID;
 	private int spriteVaoID;
 	private int spriteVboID;
+	private int tetrisPieceTextureHandle;
 
 	private final float[] triangleVertices = new float[] {
 			-0.5f, -0.5f, 0f,
@@ -55,11 +57,17 @@ public class Renderer {
 		// Set the clear color
 		glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
 
-		// Create shader programs
+		// Create triangle shader programs
 		triangleShaderProgram = new ShaderProgram();
 		triangleShaderProgram.createVertexShader("src/main/glsl/triangle_vertex.glsl");
 		triangleShaderProgram.createFragmentShader("src/main/glsl/triangle_fragment.glsl");
 		triangleShaderProgram.link();
+
+		// Create sprite shader programs
+		spriteShaderProgram = new ShaderProgram();
+		spriteShaderProgram.createVertexShader("src/main/glsl/sprite_vertex.glsl");
+		spriteShaderProgram.createFragmentShader("src/main/glsl/sprite_fragment.glsl");
+		spriteShaderProgram.link();
 
 		// Triangle VBO
 
@@ -111,6 +119,8 @@ public class Renderer {
 		// Unbind the VAO
 		glBindVertexArray(0);
 
+		// Load tetris piece texture
+		tetrisPieceTextureHandle = TextureHelper.loadTexture("/tetrispiece.png");
 	}
 
 	/**
@@ -207,7 +217,36 @@ public class Renderer {
 	 * Draw an image at the given coordinates.
 	 */
 	public void drawImage(int image, float xPos, float yPos, float width, float height, float rotationAngle) {
-		// TODO
+
+		// Bind to the VAO
+		glBindVertexArray(spriteVaoID);
+		glEnableVertexAttribArray(0);
+
+		// Set rotation uniform
+		int rotationUniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "angle");
+		glUniform1f(rotationUniformLocation, rotationAngle);
+
+		// Set color uniform
+		int colorUniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "color");
+		glUniform4fv(colorUniformLocation, new float[]{1f, 1f, 1f, 1});
+
+		// Set texture uniform
+		int textureUniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "color");
+		// Tell the texture uniform sampler to user this texture in the shader by binding to texture unit 0
+		glUniform1i(textureUniformLocation, 0);
+
+		// Bind texture
+		glBindTexture(GL_TEXTURE_2D, tetrisPieceTextureHandle);
+
+		// Draw the vertices
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		// Restore state
+		glDisableVertexAttribArray(0);
+		glBindVertexArray(0);
+
+		// Unbind from the shader program
+		triangleShaderProgram.unbind();
 	}
 
 	public void cleanup() {
