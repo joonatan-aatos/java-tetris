@@ -3,6 +3,8 @@ package visualizer;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.opengles.GLES32.*;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.opengles.GLES;
@@ -39,6 +41,19 @@ public class Renderer {
 			-1f, 1f, 0f,
 			1f, -1f, 0f,
 			1f, 1f, 0f
+	};
+
+	private FloatBuffer spriteTextureCoordinates;
+
+	private final float[] spriteTextureCoordinateData = new float[] {
+			// First triangle
+			0.0f, 1.0f,
+			0.0f, 0.0f,
+			1.0f, 1.0f,
+			// Second triangle
+			0.0f, 0.0f,
+			1.0f, 1.0f,
+			1.0f, 0.0f,
 	};
 
 	public Renderer(Window window) throws Exception {
@@ -124,8 +139,15 @@ public class Renderer {
 		// Unbind the VAO
 		glBindVertexArray(0);
 
+		// Textures
+
 		// Load tetris piece texture
 		tetrisPieceTextureHandle = TextureHelper.loadTexture("/tetrispiece.png");
+
+		// Create sprite texture coordinates
+		spriteTextureCoordinates = ByteBuffer.allocateDirect(spriteTextureCoordinateData.length * Float.BYTES)
+				.order(ByteOrder.nativeOrder()).asFloatBuffer();
+		spriteTextureCoordinates.put(spriteTextureCoordinateData).position(0);
 	}
 
 	/**
@@ -249,6 +271,15 @@ public class Renderer {
 
 		// Bind texture
 		glBindTexture(GL_TEXTURE_2D, tetrisPieceTextureHandle);
+
+		// Get and enable texture coordinates attribute
+		int textureCoordinateAttribLocation = glGetAttribLocation(spriteShaderProgram.getProgramId(), "textureCoordinate");
+		glEnableVertexAttribArray(textureCoordinateAttribLocation);
+
+		// Set texture coordinates
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		spriteTextureCoordinates.position(0);
+		glVertexAttribPointer(textureCoordinateAttribLocation, 2, GL_FLOAT, false, 0, spriteTextureCoordinates);
 
 		// Draw the vertices
 		glDrawArrays(GL_TRIANGLES, 0, 6);
