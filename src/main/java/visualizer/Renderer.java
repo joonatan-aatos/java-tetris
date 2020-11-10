@@ -12,6 +12,11 @@ import org.lwjgl.system.MemoryUtil;
 // This is also where most of the openGL code is located
 public class Renderer {
 
+	// How many coordinates there are per vertex
+	private final int COORDS_PER_VERTEX = 3;
+	// 4 bytes per vertex
+	private final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
+
 	private final Window window;
 	private ShaderProgram triangleShaderProgram;
 	private ShaderProgram spriteShaderProgram;
@@ -86,7 +91,7 @@ public class Renderer {
 		MemoryUtil.memFree(triangleVerticesBuffer);
 
 		// Define the structure of the data and store it in one of the attribute lists of the VAO
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+		glVertexAttribPointer(0, COORDS_PER_VERTEX, GL_FLOAT, false, VERTEX_STRIDE, 0);
 
 		// Unbind the VBO
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -111,7 +116,7 @@ public class Renderer {
 		MemoryUtil.memFree(spriteVerticesBuffer);
 
 		// Define the structure of the data and store it in one of the attribute lists of the VAO
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+		glVertexAttribPointer(0, COORDS_PER_VERTEX, GL_FLOAT, false, VERTEX_STRIDE, 0);
 
 		// Unbind the VBO
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -216,22 +221,29 @@ public class Renderer {
 	/**
 	 * Draw an image at the given coordinates.
 	 */
-	public void drawImage(int image, float xPos, float yPos, float width, float height, float rotationAngle) {
+	public void drawImage(int textureHandle, float xPos, float yPos, float width, float height, float rotationAngle) {
+
+		// Bind to a shader program
+		spriteShaderProgram.bind();
 
 		// Bind to the VAO
 		glBindVertexArray(spriteVaoID);
 		glEnableVertexAttribArray(0);
 
 		// Set rotation uniform
-		int rotationUniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "angle");
-		glUniform1f(rotationUniformLocation, rotationAngle);
+		int rotationUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "angle");
+		glUniform1f(rotationUniformLocation, 0);
+
+		// Set scale uniform
+		int scaleUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "scale");
+		glUniform1f(scaleUniformLocation, 0.5f);
 
 		// Set color uniform
-		int colorUniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "color");
+		int colorUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "color");
 		glUniform4fv(colorUniformLocation, new float[]{1f, 1f, 1f, 1});
 
 		// Set texture uniform
-		int textureUniformLocation = glGetUniformLocation(triangleShaderProgram.getProgramId(), "color");
+		int textureUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "texture");
 		// Tell the texture uniform sampler to user this texture in the shader by binding to texture unit 0
 		glUniform1i(textureUniformLocation, 0);
 
@@ -239,14 +251,15 @@ public class Renderer {
 		glBindTexture(GL_TEXTURE_2D, tetrisPieceTextureHandle);
 
 		// Draw the vertices
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		// Restore state
 		glDisableVertexAttribArray(0);
 		glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Unbind from the shader program
-		triangleShaderProgram.unbind();
+		spriteShaderProgram.unbind();
 	}
 
 	public void cleanup() {

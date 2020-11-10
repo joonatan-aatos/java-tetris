@@ -31,5 +31,5 @@ void main() {
 
     gl_Position = vec4(newPosition, position.z, 1.0);
 
-    vTexCoord = aTexCoord;
+    vTexCoord = newPosition;
 }

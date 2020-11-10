@@ -11,5 +11,11 @@ out vec4 fragColor;
 
 void main() {
 
-    fragColor = texture2D(texture, vTexCoord);
+//    fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    if(vTexCoord == vec2(0.0, 0.0)) {
+        fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+    else {
+        fragColor = texture2D(texture, vTexCoord);
+    }
 }

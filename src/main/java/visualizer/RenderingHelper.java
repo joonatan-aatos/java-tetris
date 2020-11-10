@@ -51,6 +51,7 @@ public class RenderingHelper {
         drawStage(world.getPlacedSquares());
         drawNextBlockBox(world.getNextPieceType());
         drawSprites(world.getSprites());
+        renderer.drawImage(0, 0, 0, 0, 0, 0);
         // Swap color buffers
         renderer.draw();
     }
