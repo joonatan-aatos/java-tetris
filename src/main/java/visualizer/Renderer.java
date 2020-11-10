@@ -22,6 +22,7 @@ public class Renderer {
 	private final Window window;
 	private ShaderProgram triangleShaderProgram;
 	private ShaderProgram spriteShaderProgram;
+	private ShaderProgram tetrisPieceShaderProgram;
 	private int triangleVaoID;
 	private int triangleVboID;
 	private int spriteVaoID;
@@ -88,6 +89,12 @@ public class Renderer {
 		spriteShaderProgram.createVertexShader("src/main/glsl/sprite_vertex.glsl");
 		spriteShaderProgram.createFragmentShader("src/main/glsl/sprite_fragment.glsl");
 		spriteShaderProgram.link();
+
+		// Create separate shader program for the tetris pieces
+		tetrisPieceShaderProgram = new ShaderProgram();
+		tetrisPieceShaderProgram.createVertexShader("src/main/glsl/sprite_vertex.glsl");
+		tetrisPieceShaderProgram.createFragmentShader("src/main/glsl/tetrisPiece_fragment.glsl");
+		tetrisPieceShaderProgram.link();
 
 		// Triangle VBO
 
@@ -243,7 +250,7 @@ public class Renderer {
 	/**
 	 * Draw an image at the given coordinates.
 	 */
-	public void drawImage(int textureHandle, float xPos, float yPos, float width, float height, float rotationAngle) {
+	public void drawImage(float xPos, float yPos, float width, float height, float rotationAngle, int textureHandle) {
 
 		// Bind to a shader program
 		spriteShaderProgram.bind();
@@ -254,15 +261,17 @@ public class Renderer {
 
 		// Set rotation uniform
 		int rotationUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "angle");
-		glUniform1f(rotationUniformLocation, 0);
+		glUniform1f(rotationUniformLocation, rotationAngle);
 
-		// Set scale uniform
-		int scaleUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "scale");
-		glUniform1f(scaleUniformLocation, 0.5f);
+		// Set scale uniforms
+		int scaleXUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "scaleX");
+		glUniform1f(scaleXUniformLocation, width);
+		int scaleYUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "scaleY");
+		glUniform1f(scaleYUniformLocation, height);
 
-		// Set color uniform
-		int colorUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "color");
-		glUniform4fv(colorUniformLocation, new float[]{1f, 1f, 1f, 1});
+		// Set offset uniform
+		int offsetUniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "offset");
+		glUniform2fv(offsetUniformLocation, new float[]{xPos, yPos});
 
 		// Set texture uniform
 		int textureUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "texture");
@@ -270,7 +279,7 @@ public class Renderer {
 		glUniform1i(textureUniformLocation, 0);
 
 		// Bind texture
-		glBindTexture(GL_TEXTURE_2D, tetrisPieceTextureHandle);
+		glBindTexture(GL_TEXTURE_2D, textureHandle);
 
 		// Get and enable texture coordinates attribute
 		int textureCoordinateAttribLocation = glGetAttribLocation(spriteShaderProgram.getProgramId(), "textureCoordinate");
@@ -291,6 +300,70 @@ public class Renderer {
 
 		// Unbind from the shader program
 		spriteShaderProgram.unbind();
+	}
+
+	public void drawTetrisPiece(float xPos, float yPos, float width, float height, float rotationAngle, float[][] replaceColors) {
+
+		// Bind to a shader program
+		tetrisPieceShaderProgram.bind();
+
+		// Bind to the VAO
+		glBindVertexArray(spriteVaoID);
+		glEnableVertexAttribArray(0);
+
+		// Set rotation uniform
+		int rotationUniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "angle");
+		glUniform1f(rotationUniformLocation, rotationAngle);
+
+		// Set scale uniforms
+		int scaleXUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "scaleX");
+		glUniform1f(scaleXUniformLocation, width);
+		int scaleYUniformLocation = glGetUniformLocation(spriteShaderProgram.getProgramId(), "scaleY");
+		glUniform1f(scaleYUniformLocation, height);
+
+		// Set offset uniform
+		int offsetUniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "offset");
+		glUniform2fv(offsetUniformLocation, new float[]{xPos, yPos});
+
+		// Set color uniforms
+		int color1UniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "color1");
+		glUniform4fv(color1UniformLocation, replaceColors[0]);
+		int color2UniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "color2");
+		glUniform4fv(color2UniformLocation, replaceColors[1]);
+		int color3UniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "color3");
+		glUniform4fv(color3UniformLocation, replaceColors[2]);
+		int color4UniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "color4");
+		glUniform4fv(color4UniformLocation, replaceColors[3]);
+		int color5UniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "color5");
+		glUniform4fv(color5UniformLocation, replaceColors[4]);
+
+		// Set texture uniform
+		int textureUniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "texture");
+		// Tell the texture uniform sampler to user this texture in the shader by binding to texture unit 0
+		glUniform1i(textureUniformLocation, 0);
+
+		// Bind texture
+		glBindTexture(GL_TEXTURE_2D, tetrisPieceTextureHandle);
+
+		// Get and enable texture coordinates attribute
+		int textureCoordinateAttribLocation = glGetAttribLocation(tetrisPieceShaderProgram.getProgramId(), "textureCoordinate");
+		glEnableVertexAttribArray(textureCoordinateAttribLocation);
+
+		// Set texture coordinates
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		spriteTextureCoordinates.position(0);
+		glVertexAttribPointer(textureCoordinateAttribLocation, 2, GL_FLOAT, false, 0, spriteTextureCoordinates);
+
+		// Draw the vertices
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// Restore state
+		glDisableVertexAttribArray(0);
+		glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		// Unbind from the shader program
+		tetrisPieceShaderProgram.unbind();
 	}
 
 	public void cleanup() {

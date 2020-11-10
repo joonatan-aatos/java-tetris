@@ -3,7 +3,8 @@
 precision mediump float;
 
 uniform float angle;
-uniform float scale;
+uniform float scaleX;
+uniform float scaleY;
 uniform vec2 offset;
 
 out vec2 vTexCoord;
@@ -20,10 +21,10 @@ void main() {
     rotationMatrix[1][1] = cos(angle);
 
     mat2 scaleMatrix;
-    scaleMatrix[0][0] = scale;
+    scaleMatrix[0][0] = scaleX;
     scaleMatrix[0][1] = 0.0;
     scaleMatrix[1][0] = 0.0;
-    scaleMatrix[1][1] = scale;
+    scaleMatrix[1][1] = scaleY;
 
     vec2 newPosition = rotationMatrix * vec2(position.x, position.y);
     newPosition = scaleMatrix * newPosition;

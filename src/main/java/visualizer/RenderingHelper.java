@@ -44,6 +44,7 @@ public class RenderingHelper {
         this.renderer = renderer;
     }
 
+    float a = 0f;
     public void drawWorld(World world) {
         // Reset
         renderer.reset();
@@ -51,7 +52,17 @@ public class RenderingHelper {
         drawStage(world.getPlacedSquares());
         drawNextBlockBox(world.getNextPieceType());
         drawSprites(world.getSprites());
-        renderer.drawImage(0, 0, 0, 0, 0, 0);
+
+        a = a > 2*Math.PI ? 0f : a+0.01f;
+
+        renderer.drawTetrisPiece((float) (0.5f*Math.cos(a)), 0, 0.1f, 0.1f, 3*a, new float[][] {
+                pieceColors[1],
+                brightenedPieceColors[2],
+                brightenedPieceColors[3],
+                brightenedPieceColors[4],
+                brightenedPieceColors[5],
+        });
+
         // Swap color buffers
         renderer.draw();
     }
