@@ -6,7 +6,7 @@ uniform float angle;
 uniform float scale;
 uniform vec2 offset;
 
-//varying vec2 vTexCoord;
+out vec2 vTexCoord;
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 aTexCoord;
@@ -31,5 +31,5 @@ void main() {
 
     gl_Position = vec4(newPosition, position.z, 1.0);
 
-    //vTexCoord = aTexCoord;
+    vTexCoord = aTexCoord;
 }
