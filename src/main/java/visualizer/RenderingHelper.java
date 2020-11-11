@@ -14,26 +14,6 @@ import java.util.stream.Stream;
 // It mostly uses the low level functions provided by the Renderer class
 public class RenderingHelper {
 
-    private final float[][] pieceColors = new float[][]{
-            {0f, 1f, 1f, 1f},
-            {1f, 1f, 0f, 1f},
-            {0.5f, 0f, 0.5f, 1f},
-            {0f, 1f, 0f, 1f},
-            {1f, 0f, 0f, 1f},
-            {0f, 0f, 1f, 1f},
-            {1f, 0.5f, 0, 1f}
-    };
-
-    private final float[][] brightenedPieceColors = new float[][]{
-            {0.6f, 1f, 1f, 1f},
-            {1f, 1f, 0.6f, 1f},
-            {0.7f, 0f, 0.7f, 1f},
-            {0.5f, 1f, 0.5f, 1f},
-            {1f, 0.4f, 0.4f, 1f},
-            {0.4f, 0.4f, 1f, 1f},
-            {1f, 0.6f, 0.4f, 1f}
-    };
-
     private final Renderer renderer;
     private final float stageWidth = 0.9f;
     private final float stageHeight = 1.8f;
@@ -44,7 +24,6 @@ public class RenderingHelper {
         this.renderer = renderer;
     }
 
-    float a = 0f;
     public void drawWorld(World world) {
         // Reset
         renderer.reset();
@@ -52,16 +31,6 @@ public class RenderingHelper {
         drawStage(world.getPlacedSquares());
         drawNextBlockBox(world.getNextPieceType());
         drawSprites(world.getSprites());
-
-        a = a > 2*Math.PI ? 0f : a+0.01f;
-
-        renderer.drawTetrisPiece((float) (0.5f*Math.cos(a)), 0, 0.1f, 0.1f, 3*a, new float[][] {
-                pieceColors[1],
-                brightenedPieceColors[2],
-                brightenedPieceColors[3],
-                brightenedPieceColors[4],
-                brightenedPieceColors[5],
-        });
 
         // Swap color buffers
         renderer.draw();
@@ -77,44 +46,44 @@ public class RenderingHelper {
 
         if(ghostBlock) {
 
-            float[] color = pieceColors[colorIndex].clone();
-            color[3] = 0.1f;
+            float[][] colors = new float[][]{
+                    Colors.pieceColors[colorIndex],
+                    Colors.pieceColors2[colorIndex],
+                    Colors.pieceColors3[colorIndex],
+                    Colors.pieceColors4[colorIndex],
+                    Colors.pieceColors5[colorIndex],
+                    Colors.brightenedPieceColors[colorIndex]
+            };
 
-            renderer.drawRectangle(
-                    x,
-                    y,
-                    stageWidth/World.WORLD_WIDTH,
-                    stageHeight/World.WORLD_HEIGHT,
-                    color
+            renderer.drawTetrisPiece(
+                    x+stageWidth/World.WORLD_WIDTH/2,
+                    y-stageHeight/World.WORLD_HEIGHT/2,
+                    stageWidth/World.WORLD_WIDTH/2,
+                    stageHeight/World.WORLD_HEIGHT/2,
+                    0,
+                    colors,
+                    0.15f
             );
             return;
         }
 
-        float[] color = pieceColors[colorIndex];
+        float[][] colors = new float[][]{
+                Colors.pieceColors[colorIndex],
+                Colors.pieceColors2[colorIndex],
+                Colors.pieceColors3[colorIndex],
+                Colors.pieceColors4[colorIndex],
+                Colors.pieceColors5[colorIndex],
+                Colors.brightenedPieceColors[colorIndex]
+        };
 
-        renderer.drawRectangle(
-                x,
-                y,
-                stageWidth/World.WORLD_WIDTH,
-                stageHeight/World.WORLD_HEIGHT,
-                color
-        );
-
-        float[] brightenedColor = brightenedPieceColors[colorIndex];
-
-        renderer.drawRectangle(
-                x,
-                y,
-                stageWidth/World.WORLD_WIDTH/10f,
-                stageHeight/World.WORLD_HEIGHT,
-                brightenedColor
-        );
-        renderer.drawRectangle(
-                x,
-                y,
-                stageWidth/World.WORLD_WIDTH,
-                stageHeight/World.WORLD_HEIGHT/10f,
-                brightenedColor
+        renderer.drawTetrisPiece(
+                x+stageWidth/World.WORLD_WIDTH/2,
+                y-stageHeight/World.WORLD_HEIGHT/2,
+                stageWidth/World.WORLD_WIDTH/2,
+                stageHeight/World.WORLD_HEIGHT/2,
+                0,
+                colors,
+                1f
         );
     }
 

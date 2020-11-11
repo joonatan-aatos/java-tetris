@@ -7,6 +7,8 @@ uniform vec4 color2;
 uniform vec4 color3;
 uniform vec4 color4;
 uniform vec4 color5;
+uniform vec4 outlineColor;
+uniform float opacity;
 
 uniform sampler2D texture;
 
@@ -33,6 +35,11 @@ void main() {
     else if(mappedColor == vec4(0.2, 0.2, 0.2, 1.0)) {
         mappedColor = color5;
     }
+    else if(mappedColor == vec4(0.0, 0.0, 0.0, 1.0)) {
+        mappedColor = outlineColor;
+    }
+
+    mappedColor.a = opacity;
 
     fragColor = mappedColor;
 }

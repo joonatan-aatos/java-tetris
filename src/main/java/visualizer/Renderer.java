@@ -302,7 +302,7 @@ public class Renderer {
 		spriteShaderProgram.unbind();
 	}
 
-	public void drawTetrisPiece(float xPos, float yPos, float width, float height, float rotationAngle, float[][] replaceColors) {
+	public void drawTetrisPiece(float xPos, float yPos, float width, float height, float rotationAngle, float[][] replaceColors, float opacity) {
 
 		// Bind to a shader program
 		tetrisPieceShaderProgram.bind();
@@ -336,6 +336,10 @@ public class Renderer {
 		glUniform4fv(color4UniformLocation, replaceColors[3]);
 		int color5UniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "color5");
 		glUniform4fv(color5UniformLocation, replaceColors[4]);
+		int outlineColorUniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "outlineColor");
+		glUniform4fv(outlineColorUniformLocation, replaceColors[5]);
+		int opacityUniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "opacity");
+		glUniform1f(opacityUniformLocation, opacity);
 
 		// Set texture uniform
 		int textureUniformLocation = glGetUniformLocation(tetrisPieceShaderProgram.getProgramId(), "texture");
