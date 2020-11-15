@@ -21,6 +21,7 @@ void main() {
     vec4 mappedColor = texture2D(texture, vTexCoord);
 
     if(mappedColor == vec4(1.0, 1.0, 1.0, 1.0)) {
+
         mappedColor = color1;
     }
     else if(mappedColor == vec4(0.8, 0.8, 0.8, 1.0)) {

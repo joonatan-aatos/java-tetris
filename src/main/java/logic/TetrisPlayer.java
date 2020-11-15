@@ -5,9 +5,10 @@ import userInput.KeyListenerInterface;
 public class TetrisPlayer implements KeyListenerInterface {
 
     Piece currentPiece;
+    World world;
 
-    protected TetrisPlayer() {
-
+    protected TetrisPlayer(World world) {
+        this.world = world;
     }
 
     protected void updateCurrentPiece(Piece p) {
@@ -45,6 +46,12 @@ public class TetrisPlayer implements KeyListenerInterface {
         else if(key == 32) {
             if(action == 1) {
                 currentPiece.fallDown();
+            }
+        }
+        // C
+        else if(key == 67) {
+            if(action == 1) {
+                world.storeCurrentPiece();
             }
         }
     }

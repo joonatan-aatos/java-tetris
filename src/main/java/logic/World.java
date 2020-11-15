@@ -1,7 +1,5 @@
 package logic;
 
-import userInput.KeyListenerInterface;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +27,8 @@ public class World {
     private ArrayList<Sprite> spritesToRemove;
     private int[][] placedSquares;
     private Piece currentPiece;
+    private Piece.PieceType storedPieceType;
+    private boolean canStorePiece;
     private TetrisPlayer tetrisPlayer;
     private WorldToGameInterface game;
     private ArrayList<Piece.PieceType> currentPieceList;
@@ -56,8 +56,10 @@ public class World {
         }
 
         currentPiece = null;
+        storedPieceType = null;
+        canStorePiece = false;
 
-        tetrisPlayer = new TetrisPlayer();
+        tetrisPlayer = new TetrisPlayer(this);
 
         currentPieceList = new ArrayList<Piece.PieceType>(Arrays.asList(pieceTypes));
         nextPieceList = new ArrayList<Piece.PieceType>(Arrays.asList(pieceTypes));
@@ -132,6 +134,9 @@ public class World {
             nextPieceList = new ArrayList<Piece.PieceType>(Arrays.asList(pieceTypes));
             Collections.shuffle(nextPieceList);
         }
+
+        if(!canStorePiece)
+            canStorePiece = true;
     }
 
     protected void hardenAPiece(Piece piece) {
@@ -163,6 +168,29 @@ public class World {
         currentPiece = null;
     }
 
+    public void storeCurrentPiece() {
+
+        if(!canStorePiece)
+            return;
+
+        Piece.PieceType newPieceType = storedPieceType;
+        storedPieceType = currentPiece.getPieceType();
+        // Remove old current piece
+        spritesToRemove.add(currentPiece);
+
+        // Create compleately new piece if there is no stored piece
+        if(newPieceType == null) {
+            createNewPiece();
+        }
+        else {
+            currentPiece = new Piece(4*GRID_SIZE, 19*GRID_SIZE, newPieceType, this);
+            sprites.add(currentPiece);
+            tetrisPlayer.updateCurrentPiece(currentPiece);
+        }
+
+        canStorePiece = false;
+    }
+
     /**
      * @return Return a copy of the current sprites object
      */
@@ -179,5 +207,9 @@ public class World {
 
     public Piece.PieceType getNextPieceType() {
         return currentPieceList.size() == 0 ? nextPieceList.get(0) : currentPieceList.get(0);
+    }
+
+    public Piece.PieceType getStoredPieceType() {
+        return storedPieceType;
     }
 }

@@ -30,6 +30,7 @@ public class RenderingHelper {
         // Draw
         drawStage(world.getPlacedSquares());
         drawNextBlockBox(world.getNextPieceType());
+        drawStoredBlockBox(world.getStoredPieceType());
         drawSprites(world.getSprites());
 
         // Swap color buffers
@@ -153,6 +154,56 @@ public class RenderingHelper {
                     drawSquare(stageWidth/2 + (1-(stageWidth/2))/2 - stageWidth/World.WORLD_WIDTH/2 + (j-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixX,
                             0.8f-sideBoxHeight/2 + (pieceShape.length-1-i-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixY,
                             nextPiece.getTypeIndex(), false);
+                }
+            }
+        }
+
+    }
+
+    private void drawStoredBlockBox(PieceType storedPiece) {
+
+        // Draw another black rectangle for the next square box
+        renderer.drawRectangle(
+                - stageWidth/2 - (1-(stageWidth/2))/2 - sideBoxWidth/2,
+                0.8f,
+                sideBoxWidth,
+                sideBoxHeight,
+                new float[]{0f, 0f, 0f, 1f}
+        );
+
+        // Return if there is no stored piece
+        if(storedPiece == null)
+            return;
+
+        int[][] pieceShape = storedPiece.getShape();
+        // Center distance is 1 except in the O piece where it is 0
+        int centerDistance = 1;
+        if(pieceShape.length == 2) {
+            centerDistance = 0;
+        }
+
+        float positionFixX = 0f;
+        float positionFixY = 0f;
+
+        switch (storedPiece.getTypeIndex()) {
+            case 0: {
+                positionFixX = -stageWidth / World.WORLD_WIDTH / 2;
+                positionFixY = -stageWidth / World.WORLD_WIDTH / 2;
+                break;
+            }
+            case 1: {
+                positionFixX = -stageWidth / World.WORLD_WIDTH / 2;
+                positionFixY = 0;
+                break;
+            }
+        }
+
+        for(int i = 0; i < pieceShape.length; i++) {
+            for(int j = 0; j < pieceShape[0].length; j++) {
+                if(pieceShape[i][j] != 0) {
+                    drawSquare(- stageWidth/2 - (1-(stageWidth/2))/2 - stageWidth/World.WORLD_WIDTH/2 + (j-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixX,
+                            0.8f-sideBoxHeight/2 + (pieceShape.length-1-i-centerDistance)*stageWidth/World.WORLD_WIDTH + positionFixY,
+                            storedPiece.getTypeIndex(), false);
                 }
             }
         }
