@@ -12,7 +12,9 @@ public class TetrisPlayer implements KeyListenerInterface {
     }
 
     protected void updateCurrentPiece(Piece p) {
+        boolean fallingFast = currentPiece != null && currentPiece.isFallingFast();
         currentPiece = p;
+        currentPiece.fallFast(fallingFast);
     }
 
     @Override

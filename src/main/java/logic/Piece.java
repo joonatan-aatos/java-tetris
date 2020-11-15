@@ -76,6 +76,10 @@ public class Piece extends Sprite {
         fallTimer = 0;
     }
 
+    public boolean isFallingFast() {
+        return fallFast;
+    }
+
     public int getGhostBlockHeight() {
         int height = yPos;
         while(canBeInPosition(xPos, height - 10, shape)) {
