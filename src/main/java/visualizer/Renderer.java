@@ -172,12 +172,17 @@ public class Renderer {
 	}
 
 	/**
-	 * Swap the color buffers and poll for window events.
+	 * Swap the color buffers.
 	 */
 	public void draw() {
 		// Swap the color buffers
 		window.swapBuffers();
+	}
 
+	/**
+	 * Poll for window events.
+	 */
+	public void pollForWindowEvents() {
 		// Poll for window events.
 		// The key callback above will only be invoked during this call.
 		glfwPollEvents();

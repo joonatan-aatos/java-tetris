@@ -46,6 +46,8 @@ public class Visualizer {
 
     public void update(World world) {
 
+        renderer.pollForWindowEvents();
+
         if(!window.shouldClose()) {
             renderingHelper.drawWorld(world);
         }

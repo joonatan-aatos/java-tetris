@@ -17,15 +17,39 @@ public class RenderingHelper {
     private final float sideBoxWidth = 0.4f;
     private final float sideBoxHeight = 0.5f;
 
+    // Draw logic
+    private int clearEffectTimer = 0;
+    private int dropEffectTimer = 0;
+    private float effectYChange = 0;
+
     public RenderingHelper(Renderer renderer) {
         this.renderer = renderer;
     }
 
     public void drawWorld(World world) {
+
+        // Logic
+        if(world.wasRowCleared())
+            clearEffectTimer = 6;
+        else if(world.wasPieceHardened())
+            dropEffectTimer = 6;
+
+        if(clearEffectTimer > 0) {
+            clearEffectTimer--;
+            effectYChange = clearEffectTimer * (clearEffectTimer - 6f) / 200f;
+            if(dropEffectTimer != 0)
+                dropEffectTimer = 0;
+        }
+        else if(dropEffectTimer > 0) {
+            dropEffectTimer--;
+            effectYChange = dropEffectTimer * (dropEffectTimer - 6f) / 600f;
+        }
+
         // Reset
         renderer.reset();
         // Draw
-        drawStage(world.getPlacedSquares());
+        drawStage();
+        drawPlacedPieces(world.getPlacedSquares());
         drawNextBlockBox(world.getNextPieceType());
         drawStoredBlockBox(world.getStoredPieceType());
         drawCurrentPiece(world.getCurrentPiece());
@@ -55,7 +79,7 @@ public class RenderingHelper {
 
             renderer.drawTetrisPiece(
                     x+stageWidth/World.WORLD_WIDTH/2,
-                    y-stageHeight/World.WORLD_HEIGHT/2,
+                    y-stageHeight/World.WORLD_HEIGHT/2 + effectYChange,
                     stageWidth/World.WORLD_WIDTH/2,
                     stageHeight/World.WORLD_HEIGHT/2,
                     0,
@@ -76,7 +100,7 @@ public class RenderingHelper {
 
         renderer.drawTetrisPiece(
                 x+stageWidth/World.WORLD_WIDTH/2,
-                y-stageHeight/World.WORLD_HEIGHT/2,
+                y-stageHeight/World.WORLD_HEIGHT/2 + effectYChange,
                 stageWidth/World.WORLD_WIDTH/2,
                 stageHeight/World.WORLD_HEIGHT/2,
                 0,
@@ -85,16 +109,19 @@ public class RenderingHelper {
         );
     }
 
-    private void drawStage(int[][] placedSquares) {
+    private void drawStage() {
 
         // Black rectangle
         renderer.drawRectangle(
                 -stageWidth/2,
-                1,
+                1f,
                 stageWidth,
-                stageHeight + 1f-stageHeight/2,
+                stageHeight + 1f-stageHeight/2 - effectYChange,
                 new float[]{0f, 0f, 0f, 1f}
         );
+    }
+
+    private void drawPlacedPieces(int[][] placedSquares) {
 
         // Draw placed squares
         for(int i = 0; i < placedSquares.length; i++) {
@@ -116,7 +143,7 @@ public class RenderingHelper {
         // Draw another black rectangle for the next square box
         renderer.drawRectangle(
                 stageWidth/2 + (1-(stageWidth/2))/2-sideBoxWidth/2,
-                0.8f,
+                0.8f + effectYChange,
                 sideBoxWidth,
                 sideBoxHeight,
                 new float[]{0f, 0f, 0f, 1f}
@@ -162,7 +189,7 @@ public class RenderingHelper {
         // Draw another black rectangle for the next square box
         renderer.drawRectangle(
                 - stageWidth/2 - (1-(stageWidth/2))/2 - sideBoxWidth/2,
-                0.8f,
+                0.8f + effectYChange,
                 sideBoxWidth,
                 sideBoxHeight,
                 new float[]{0f, 0f, 0f, 1f}
@@ -204,7 +231,6 @@ public class RenderingHelper {
                 }
             }
         }
-
     }
 
     private void drawCurrentPiece(Piece piece) {
@@ -218,23 +244,25 @@ public class RenderingHelper {
         if (pieceShape.length == 2) {
             centerDistance = 0;
         }
-        for (int i = 0; i < pieceShape.length; i++) {
-            for (int j = 0; j < pieceShape[0].length; j++) {
-                if (pieceShape[i][j] != 0) {
-                    int x = piece.getxPos() + (j - centerDistance) * World.GRID_SIZE;
-                    int y = piece.getyPos() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
-                    drawSquare(x, y, piece.getPieceType().getTypeIndex(), false);
-                }
-            }
-        }
 
-        // Draw ghost block
+        // Draw ghost block first
         for (int i = 0; i < pieceShape.length; i++) {
             for (int j = 0; j < pieceShape[0].length; j++) {
                 if (pieceShape[i][j] != 0) {
                     int x = piece.getxPos() + (j - centerDistance) * World.GRID_SIZE;
                     int y = piece.getGhostBlockHeight() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
                     drawSquare(x, y, piece.getPieceType().getTypeIndex(), true);
+                }
+            }
+        }
+
+        // Draw the actual piece
+        for (int i = 0; i < pieceShape.length; i++) {
+            for (int j = 0; j < pieceShape[0].length; j++) {
+                if (pieceShape[i][j] != 0) {
+                    int x = piece.getxPos() + (j - centerDistance) * World.GRID_SIZE;
+                    int y = piece.getyPos() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
+                    drawSquare(x, y, piece.getPieceType().getTypeIndex(), false);
                 }
             }
         }

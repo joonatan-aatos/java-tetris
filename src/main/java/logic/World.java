@@ -35,6 +35,8 @@ public class World {
     private ArrayList<Piece.PieceType> nextPieceList;
     private int rowsCleared;
     private int currentFallTime;
+    private boolean rowCleared;
+    private boolean pieceHardened;
 
     public World(WorldToGameInterface game) {
 
@@ -58,6 +60,8 @@ public class World {
         currentPiece = null;
         storedPieceType = null;
         canStorePiece = false;
+        rowCleared = false;
+        pieceHardened = false;
 
         tetrisPlayer = new TetrisPlayer(this);
 
@@ -73,6 +77,11 @@ public class World {
 
     // Called every time the world should update
     public void tick() {
+
+        if(rowCleared)
+            rowCleared = false;
+        if(pieceHardened)
+            pieceHardened = false;
 
         if(currentPiece == null)
             createNewPiece();
@@ -93,19 +102,20 @@ public class World {
                     removeRow(i);
                     rowsCleared++;
                     updateFallTime();
-                    System.out.println("Rows cleared: "+rowsCleared);
+                    rowCleared = true;
                     // Check the same row again
                     i++;
                     break;
                 }
             }
         }
+        if(rowCleared)
+            System.out.println("Rows cleared: "+rowsCleared);
     }
 
     // Update fall time
     private void updateFallTime() {
 
-//        int calculatedFallTime = 60 - (int) Math.round(6*Math.sqrt(rowsCleared));
         int calculatedFallTime = 60 - (int) Math.round(fallSpeedMultiplier*Math.log(rowsCleared+1));
 
         if(calculatedFallTime < 0)
@@ -177,6 +187,7 @@ public class World {
         }
 
         currentPiece = null;
+        pieceHardened = true;
     }
 
     public void storeCurrentPiece() {
@@ -219,5 +230,13 @@ public class World {
 
     public Piece.PieceType getStoredPieceType() {
         return storedPieceType;
+    }
+
+    public boolean wasRowCleared() {
+        return rowCleared;
+    }
+
+    public boolean wasPieceHardened() {
+        return pieceHardened;
     }
 }
