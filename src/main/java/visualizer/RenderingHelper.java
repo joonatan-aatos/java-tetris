@@ -48,11 +48,11 @@ public class RenderingHelper {
         if(ghostBlock) {
 
             float[][] colors = new float[][]{
-                    Colors.pieceColors[colorIndex],
-                    Colors.pieceColors2[colorIndex],
-                    Colors.pieceColors3[colorIndex],
-                    Colors.pieceColors4[colorIndex],
-                    Colors.pieceColors5[colorIndex],
+                    new float[]{0f, 0f, 0f, 1f},
+                    new float[]{0f, 0f, 0f, 1f},
+                    new float[]{0f, 0f, 0f, 1f},
+                    new float[]{0f, 0f, 0f, 1f},
+                    new float[]{0f, 0f, 0f, 1f},
                     Colors.brightenedPieceColors[colorIndex]
             };
 
@@ -63,7 +63,7 @@ public class RenderingHelper {
                     stageHeight/World.WORLD_HEIGHT/2,
                     0,
                     colors,
-                    0.15f
+                    0.20f
             );
             return;
         }

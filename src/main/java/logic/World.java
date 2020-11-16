@@ -125,8 +125,6 @@ public class World {
 
         if(currentFallTime != calculatedFallTime)
             currentFallTime = calculatedFallTime;
-
-        System.out.println("Fall time: "+currentFallTime);
     }
 
     // Remove a row
