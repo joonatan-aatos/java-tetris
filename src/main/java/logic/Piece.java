@@ -11,18 +11,20 @@ public class Piece extends Sprite {
     private int[][] shape;
     private boolean fallFast;
     private World world;
+    private boolean hardened;
 
-    protected Piece(int x, int y, PieceType type, World world) {
+    protected Piece(int x, int y, PieceType type, World world, int fallTime) {
         super(x, y);
         this.type = type;
         this.world = world;
         shape = type.getShape();
         fallFast = false;
-        fallTime = 60;
+        this.fallTime = fallTime;
         fallTimer = fallTime;
         hardenTime = 60;
         hardenTimer = hardenTime;
         fastFallSpeed = 5;
+        hardened = false;
     }
 
     @Override
@@ -48,16 +50,24 @@ public class Piece extends Sprite {
         int[][] rotatedShape = rotatePiece(shape);
         if(canBeInPosition(xPos, yPos, rotatedShape)) {
             shape = rotatedShape;
-        }
-        else if(canBeInPosition(xPos-10, yPos, rotatedShape)) {
+        } else if(canBeInPosition(xPos, yPos+10, rotatedShape)) {
+            shape = rotatedShape;
+            yPos += 10;
+        } else if(canBeInPosition(xPos-10, yPos, rotatedShape)) {
             shape = rotatedShape;
             xPos -= 10;
         } else if(canBeInPosition(xPos+10, yPos, rotatedShape)) {
             shape = rotatedShape;
             xPos += 10;
-        } else if(canBeInPosition(xPos, yPos+10, rotatedShape)) {
+        } else if(canBeInPosition(xPos, yPos+20, rotatedShape)) {
             shape = rotatedShape;
-            yPos += 10;
+            yPos += 20;
+        } else if(canBeInPosition(xPos-20, yPos, rotatedShape)) {
+            shape = rotatedShape;
+            xPos -= 20;
+        } else if(canBeInPosition(xPos+20, yPos, rotatedShape)) {
+            shape = rotatedShape;
+            xPos += 20;
         }
     }
 
@@ -114,7 +124,10 @@ public class Piece extends Sprite {
      * Turn into stone
      */
     private void harden() {
-        world.hardenAPiece(this);
+        if(!hardened) {
+            world.hardenAPiece(this);
+            hardened = true;
+        }
     }
 
     /**

@@ -22,6 +22,9 @@ public class World {
             Piece.PieceType.Z,
     };
 
+    // Other
+    private final double fallSpeedMultiplier = 60d/Math.log(201);
+
     // List that stores all sprites
     private ArrayList<Sprite> sprites;
     private ArrayList<Sprite> spritesToRemove;
@@ -33,6 +36,8 @@ public class World {
     private WorldToGameInterface game;
     private ArrayList<Piece.PieceType> currentPieceList;
     private ArrayList<Piece.PieceType> nextPieceList;
+    private int rowsCleared;
+    private int currentFallTime;
 
     public World(WorldToGameInterface game) {
 
@@ -65,6 +70,10 @@ public class World {
         nextPieceList = new ArrayList<Piece.PieceType>(Arrays.asList(pieceTypes));
         Collections.shuffle(currentPieceList);
         Collections.shuffle(nextPieceList);
+
+        rowsCleared = 0;
+        currentFallTime = -1;
+        updateFallTime();
     }
 
     // Called every time the world should update
@@ -94,12 +103,30 @@ public class World {
                 if(j == placedSquares[0].length-1) {
                     // Row is complete
                     removeRow(i);
+                    rowsCleared++;
+                    updateFallTime();
+                    System.out.println("Rows cleared: "+rowsCleared);
                     // Check the same row again
                     i++;
                     break;
                 }
             }
         }
+    }
+
+    // Update fall time
+    private void updateFallTime() {
+
+//        int calculatedFallTime = 60 - (int) Math.round(6*Math.sqrt(rowsCleared));
+        int calculatedFallTime = 60 - (int) Math.round(fallSpeedMultiplier*Math.log(rowsCleared+1));
+
+        if(calculatedFallTime < 0)
+            calculatedFallTime = 0;
+
+        if(currentFallTime != calculatedFallTime)
+            currentFallTime = calculatedFallTime;
+
+        System.out.println("Fall time: "+currentFallTime);
     }
 
     // Remove a row
@@ -125,7 +152,7 @@ public class World {
     }
 
     private void createNewPiece() {
-        currentPiece = new Piece(4*GRID_SIZE, 19*GRID_SIZE, currentPieceList.remove(0), this);
+        currentPiece = new Piece(4*GRID_SIZE, 19*GRID_SIZE, currentPieceList.remove(0), this, currentFallTime);
         sprites.add(currentPiece);
         tetrisPlayer.updateCurrentPiece(currentPiece);
 
@@ -183,7 +210,7 @@ public class World {
             createNewPiece();
         }
         else {
-            currentPiece = new Piece(4*GRID_SIZE, 19*GRID_SIZE, newPieceType, this);
+            currentPiece = new Piece(4*GRID_SIZE, 19*GRID_SIZE, newPieceType, this, currentFallTime);
             sprites.add(currentPiece);
             tetrisPlayer.updateCurrentPiece(currentPiece);
         }
