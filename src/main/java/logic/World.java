@@ -25,9 +25,6 @@ public class World {
     // Other
     private final double fallSpeedMultiplier = 60d/Math.log(201);
 
-    // List that stores all sprites
-    private ArrayList<Sprite> sprites;
-    private ArrayList<Sprite> spritesToRemove;
     private int[][] placedSquares;
     private Piece currentPiece;
     private Piece.PieceType storedPieceType;
@@ -49,8 +46,6 @@ public class World {
     // Init
     private void init() {
 
-        sprites = new ArrayList<Sprite>();
-        spritesToRemove = new ArrayList<Sprite>();
         placedSquares = new int[20][10];
 
         // Set all the arrays values to 0
@@ -81,15 +76,8 @@ public class World {
 
         if(currentPiece == null)
             createNewPiece();
-        // Invoke tick() for every sprite
-        for(Sprite sprite : sprites) {
-            sprite.tick();
-        }
-        // Remove sprites
-        for(Sprite sprite : spritesToRemove) {
-            sprites.remove(sprite);
-        }
-        spritesToRemove.clear();
+        // Invoke tick() for current piece
+        currentPiece.tick();
 
         checkForCompleteRows();
     }
@@ -151,7 +139,6 @@ public class World {
 
     private void createNewPiece() {
         currentPiece = new Piece(4*GRID_SIZE, 19*GRID_SIZE, currentPieceList.remove(0), this, currentFallTime);
-        sprites.add(currentPiece);
         tetrisPlayer.updateCurrentPiece(currentPiece);
 
         if(currentPieceList.size() == 0) {
@@ -189,7 +176,6 @@ public class World {
             }
         }
 
-        spritesToRemove.add(piece);
         currentPiece = null;
     }
 
@@ -200,8 +186,6 @@ public class World {
 
         Piece.PieceType newPieceType = storedPieceType;
         storedPieceType = currentPiece.getPieceType();
-        // Remove old current piece
-        spritesToRemove.add(currentPiece);
 
         // Create compleately new piece if there is no stored piece
         if(newPieceType == null) {
@@ -209,7 +193,6 @@ public class World {
         }
         else {
             currentPiece = new Piece(4*GRID_SIZE, 19*GRID_SIZE, newPieceType, this, currentFallTime);
-            sprites.add(currentPiece);
             tetrisPlayer.updateCurrentPiece(currentPiece);
         }
 
@@ -217,10 +200,10 @@ public class World {
     }
 
     /**
-     * @return Return a copy of the current sprites object
+     * @return Return a copy of the current piece
      */
-    public ArrayList<Sprite> getSprites() {
-        return new ArrayList<Sprite>(sprites);
+    public Piece getCurrentPiece() {
+        return currentPiece;
     }
 
     /**

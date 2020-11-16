@@ -5,10 +5,7 @@ import logic.Piece.PieceType;
 import logic.Sprite;
 import logic.World;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 // This class has more high level interface for drawing the game
 // It mostly uses the low level functions provided by the Renderer class
@@ -31,7 +28,7 @@ public class RenderingHelper {
         drawStage(world.getPlacedSquares());
         drawNextBlockBox(world.getNextPieceType());
         drawStoredBlockBox(world.getStoredPieceType());
-        drawSprites(world.getSprites());
+        drawCurrentPiece(world.getCurrentPiece());
 
         // Swap color buffers
         renderer.draw();
@@ -210,37 +207,34 @@ public class RenderingHelper {
 
     }
 
-    private void drawSprites(ArrayList<Sprite> sprites) {
+    private void drawCurrentPiece(Piece piece) {
 
-        for(Sprite sprite : sprites) {
-            if(sprite instanceof Piece) {
-                Piece piece = (Piece) sprite;
-                PieceType pieceType = piece.getPieceType();
-                int[][] pieceShape = piece.getPieceShape();
-                // Center distance is 1 except in the O piece where it is 0
-                int centerDistance = 1;
-                if(pieceShape.length == 2) {
-                    centerDistance = 0;
-                }
-                for(int i = 0; i < pieceShape.length; i++) {
-                    for(int j = 0; j < pieceShape[0].length; j++) {
-                        if(pieceShape[i][j] != 0) {
-                            int x = piece.getxPos() + (j - centerDistance) * World.GRID_SIZE;
-                            int y = piece.getyPos() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
-                            drawSquare(x, y, piece.getPieceType().getTypeIndex(), false);
-                        }
-                    }
-                }
+        if(piece == null)
+            return;
 
-                // Draw ghost block
-                for(int i = 0; i < pieceShape.length; i++) {
-                    for(int j = 0; j < pieceShape[0].length; j++) {
-                        if(pieceShape[i][j] != 0) {
-                            int x = piece.getxPos() + (j - centerDistance) * World.GRID_SIZE;
-                            int y = piece.getGhostBlockHeight() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
-                            drawSquare(x, y, piece.getPieceType().getTypeIndex(), true);
-                        }
-                    }
+        int[][] pieceShape = piece.getPieceShape();
+        // Center distance is 1 except in the O piece where it is 0
+        int centerDistance = 1;
+        if (pieceShape.length == 2) {
+            centerDistance = 0;
+        }
+        for (int i = 0; i < pieceShape.length; i++) {
+            for (int j = 0; j < pieceShape[0].length; j++) {
+                if (pieceShape[i][j] != 0) {
+                    int x = piece.getxPos() + (j - centerDistance) * World.GRID_SIZE;
+                    int y = piece.getyPos() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
+                    drawSquare(x, y, piece.getPieceType().getTypeIndex(), false);
+                }
+            }
+        }
+
+        // Draw ghost block
+        for (int i = 0; i < pieceShape.length; i++) {
+            for (int j = 0; j < pieceShape[0].length; j++) {
+                if (pieceShape[i][j] != 0) {
+                    int x = piece.getxPos() + (j - centerDistance) * World.GRID_SIZE;
+                    int y = piece.getGhostBlockHeight() + ((pieceShape.length - i) - centerDistance) * World.GRID_SIZE;
+                    drawSquare(x, y, piece.getPieceType().getTypeIndex(), true);
                 }
             }
         }
