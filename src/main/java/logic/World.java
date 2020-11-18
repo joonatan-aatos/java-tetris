@@ -9,6 +9,7 @@ public class World {
 
     public static final int WORLD_WIDTH = 10;
     public static final int WORLD_HEIGHT = 20;
+    public static final int PLAYABLE_WORLD_HEIGHT = 25;
     // Coordinates between two adjacent squares
     public static final int GRID_SIZE = 10;
 
@@ -48,7 +49,7 @@ public class World {
     // Init
     private void init() {
 
-        placedSquares = new int[20][10];
+        placedSquares = new int[PLAYABLE_WORLD_HEIGHT][WORLD_WIDTH];
 
         // Set all the arrays values to 0
         for(int i = 0; i < placedSquares.length; i++) {
@@ -148,7 +149,7 @@ public class World {
     }
 
     private void createNewPiece() {
-        currentPiece = new Piece(4*GRID_SIZE, 19*GRID_SIZE, currentPieceList.remove(0), this, currentFallTime);
+        currentPiece = new Piece(4*GRID_SIZE, WORLD_HEIGHT*GRID_SIZE, currentPieceList.remove(0), this, currentFallTime);
         tetrisPlayer.updateCurrentPiece(currentPiece);
 
         if(currentPieceList.size() == 0) {
@@ -177,7 +178,7 @@ public class World {
                     int x = piece.getxPos() + (j - centerDistance) * GRID_SIZE;
                     int y = piece.getyPos() + ((shape.length - i - 1) - centerDistance) * GRID_SIZE;
                     if(x >= 0 && x < WORLD_WIDTH*GRID_SIZE &&
-                            y >= 0 && y < WORLD_HEIGHT*GRID_SIZE &&
+                            y >= 0 && y < PLAYABLE_WORLD_HEIGHT*GRID_SIZE &&
                             placedSquares[y/GRID_SIZE][x/GRID_SIZE] == 0) {
 
                         placedSquares[y/GRID_SIZE][x/GRID_SIZE] = piece.getPieceType().getTypeIndex()+1;

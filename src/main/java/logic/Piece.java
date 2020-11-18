@@ -151,7 +151,7 @@ public class Piece extends Sprite {
                     int x = newX + (j - centerDistance) * World.GRID_SIZE;
                     int y = newY + ((newShape.length - i - 1) - centerDistance) * World.GRID_SIZE;
                     if(x < 0 || x >= World.WORLD_WIDTH*World.GRID_SIZE || y < 0 ||
-                            (y < World.WORLD_HEIGHT*World.GRID_SIZE && world.getPlacedSquares()[y/World.GRID_SIZE][x/World.GRID_SIZE] != 0)) {
+                            (y < World.PLAYABLE_WORLD_HEIGHT*World.GRID_SIZE && world.getPlacedSquares()[y/World.GRID_SIZE][x/World.GRID_SIZE] != 0)) {
                         return false;
                     }
                 }

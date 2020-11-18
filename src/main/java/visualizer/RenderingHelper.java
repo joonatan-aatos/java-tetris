@@ -30,19 +30,19 @@ public class RenderingHelper {
 
         // Logic
         if(world.wasRowCleared())
-            clearEffectTimer = 6;
+            clearEffectTimer = 8;
         else if(world.wasPieceHardened())
             dropEffectTimer = 6;
 
         if(clearEffectTimer > 0) {
             clearEffectTimer--;
-            effectYChange = clearEffectTimer * (clearEffectTimer - 6f) / 200f;
+            effectYChange = clearEffectTimer * (clearEffectTimer - 8f) / 400f;
             if(dropEffectTimer != 0)
                 dropEffectTimer = 0;
         }
         else if(dropEffectTimer > 0) {
             dropEffectTimer--;
-            effectYChange = dropEffectTimer * (dropEffectTimer - 6f) / 600f;
+            effectYChange = dropEffectTimer * (dropEffectTimer - 6f) / 800f;
         }
 
         // Reset
