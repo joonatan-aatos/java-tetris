@@ -1,5 +1,6 @@
 package visualizer;
 
+import game.Game;
 import logic.Piece;
 import logic.Piece.PieceType;
 import logic.Sprite;
@@ -20,13 +21,15 @@ public class RenderingHelper {
     // Draw logic
     private int clearEffectTimer = 0;
     private int dropEffectTimer = 0;
+    private int gameOverEffectTimer = 0;
+
     private float effectYChange = 0;
 
     public RenderingHelper(Renderer renderer) {
         this.renderer = renderer;
     }
 
-    public void drawWorld(World world) {
+    public void drawWorld(World world, Game.State state) {
 
         // Logic
         if(world.wasRowCleared())
@@ -47,12 +50,28 @@ public class RenderingHelper {
 
         // Reset
         renderer.reset();
+
         // Draw
-        drawStage();
-        drawPlacedPieces(world.getPlacedSquares());
-        drawNextBlockBox(world.getNextPieceType());
-        drawStoredBlockBox(world.getStoredPieceType());
-        drawCurrentPiece(world.getCurrentPiece());
+        switch(state) {
+            case Running: {
+
+                drawStage();
+                drawPlacedPieces(world.getPlacedSquares());
+                drawNextBlockBox(world.getNextPieceType());
+                drawStoredBlockBox(world.getStoredPieceType());
+                drawCurrentPiece(world.getCurrentPiece());
+
+                break;
+            }
+            case GameOver: {
+                drawGameOverScreen();
+                break;
+            }
+            case MainMenu: {
+                drawMainMenu();
+                break;
+            }
+        }
 
         // Swap color buffers
         renderer.draw();
@@ -106,6 +125,39 @@ public class RenderingHelper {
                 0,
                 colors,
                 1f
+        );
+    }
+
+    private void drawGameOverScreen() {
+
+        renderer.drawImage(
+                0,
+                0.1f,
+                0.8f,
+                0.8f*renderer.gameOverTexture.height/renderer.gameOverTexture.width,
+                0,
+                renderer.gameOverTexture.textureHandle
+        );
+
+        renderer.drawImage(
+                0,
+                -0.15f,
+                0.6f,
+                0.6f*renderer.pressContinueTexture.height/renderer.pressContinueTexture.width,
+                0,
+                renderer.pressContinueTexture.textureHandle
+        );
+    }
+
+    private void drawMainMenu() {
+
+        renderer.drawImage(
+                0,
+                -0.15f,
+                0.5f,
+                0.5f*renderer.pressStartTexture.height/renderer.pressStartTexture.width,
+                0,
+                renderer.pressStartTexture.textureHandle
         );
     }
 

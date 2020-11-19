@@ -38,6 +38,7 @@ public class World {
     private int currentFallTime;
     private boolean rowCleared;
     private boolean pieceHardened;
+    private boolean gameEnded;
 
     public World(WorldToGameInterface game) {
 
@@ -48,6 +49,12 @@ public class World {
 
     // Init
     private void init() {
+
+        resetState();
+        tetrisPlayer = new TetrisPlayer(this);
+    }
+
+    private void resetState() {
 
         placedSquares = new int[PLAYABLE_WORLD_HEIGHT][WORLD_WIDTH];
 
@@ -64,8 +71,6 @@ public class World {
         rowCleared = false;
         pieceHardened = false;
 
-        tetrisPlayer = new TetrisPlayer(this);
-
         currentPieceList = new ArrayList<Piece.PieceType>(Arrays.asList(pieceTypes));
         nextPieceList = new ArrayList<Piece.PieceType>(Arrays.asList(pieceTypes));
         Collections.shuffle(currentPieceList);
@@ -74,6 +79,9 @@ public class World {
         rowsCleared = 0;
         currentFallTime = -1;
         updateFallTime();
+
+        gameEnded = false;
+
     }
 
     // Called every time the world should update
@@ -90,6 +98,28 @@ public class World {
         currentPiece.tick();
 
         checkForCompleteRows();
+
+        if(gameShouldEnd() && !gameEnded) {
+            gameEnded = true;
+            game.gameEnded();
+        }
+    }
+
+    public void reset() {
+
+        resetState();
+    }
+
+    private boolean gameShouldEnd() {
+        for(int i = PLAYABLE_WORLD_HEIGHT-1; i >= WORLD_HEIGHT; i--) {
+            for(int j = 0; j < placedSquares[0].length; j++) {
+                if(placedSquares[i][j] != 0) {
+                    // Game should end
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void checkForCompleteRows() {

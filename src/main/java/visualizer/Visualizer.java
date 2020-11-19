@@ -4,6 +4,7 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
+import game.Game;
 import game.GameInfo;
 import logic.World;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -44,12 +45,12 @@ public class Visualizer {
         renderingHelper = new RenderingHelper(renderer);
     }
 
-    public void update(World world) {
+    public void update(World world, Game.State state) {
 
         renderer.pollForWindowEvents();
 
         if(!window.shouldClose()) {
-            renderingHelper.drawWorld(world);
+            renderingHelper.drawWorld(world, state);
         }
         else {
             stop();

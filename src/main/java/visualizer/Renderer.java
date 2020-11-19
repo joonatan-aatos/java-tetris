@@ -29,7 +29,11 @@ public class Renderer {
 	private int triangleVboID;
 	private int spriteVaoID;
 	private int spriteVboID;
-	private Texture tetrisPieceTexture;
+
+	protected final Texture tetrisPieceTexture;
+	protected final Texture gameOverTexture;
+	protected final Texture pressContinueTexture;
+	protected final Texture pressStartTexture;
 
 	private final float[] triangleVertices = new float[] {
 			-0.5f, -0.5f, 0f,
@@ -60,8 +64,17 @@ public class Renderer {
 	};
 
 	public Renderer(Window window) throws Exception {
+
 		this.window = window;
+
 		init();
+
+		// Load textures
+		tetrisPieceTexture = TextureHelper.loadTexture("/textures/tetrispiece.png");
+		gameOverTexture = TextureHelper.loadTexture("/textures/gameover.png");
+		pressContinueTexture = TextureHelper.loadTexture("/textures/pressspacetocontinue.png");
+		pressStartTexture = TextureHelper.loadTexture("/textures/pressspacetostart.png");
+
 	}
 
 	private void init() throws Exception {
@@ -147,11 +160,6 @@ public class Renderer {
 
 		// Unbind the VAO
 		glBindVertexArray(0);
-
-		// Textures
-
-		// Load tetris piece texture
-		tetrisPieceTexture = TextureHelper.loadTexture("/tetrispiece.png");
 
 		// Create sprite texture coordinates
 		spriteTextureCoordinates = ByteBuffer.allocateDirect(spriteTextureCoordinateData.length * Float.BYTES)
