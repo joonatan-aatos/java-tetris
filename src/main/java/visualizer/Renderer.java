@@ -9,6 +9,8 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.opengles.GLES;
 import org.lwjgl.system.MemoryUtil;
+import visualizer.textures.Texture;
+import visualizer.textures.TextureHelper;
 
 // This class is responsible for rendering stuff on the screen
 // This is also where most of the openGL code is located
@@ -27,7 +29,7 @@ public class Renderer {
 	private int triangleVboID;
 	private int spriteVaoID;
 	private int spriteVboID;
-	private int tetrisPieceTextureHandle;
+	private Texture tetrisPieceTexture;
 
 	private final float[] triangleVertices = new float[] {
 			-0.5f, -0.5f, 0f,
@@ -149,7 +151,7 @@ public class Renderer {
 		// Textures
 
 		// Load tetris piece texture
-		tetrisPieceTextureHandle = TextureHelper.loadTexture("/tetrispiece.png");
+		tetrisPieceTexture = TextureHelper.loadTexture("/tetrispiece.png");
 
 		// Create sprite texture coordinates
 		spriteTextureCoordinates = ByteBuffer.allocateDirect(spriteTextureCoordinateData.length * Float.BYTES)
@@ -352,7 +354,7 @@ public class Renderer {
 		glUniform1i(textureUniformLocation, 0);
 
 		// Bind texture
-		glBindTexture(GL_TEXTURE_2D, tetrisPieceTextureHandle);
+		glBindTexture(GL_TEXTURE_2D, tetrisPieceTexture.textureHandle);
 
 		// Get and enable texture coordinates attribute
 		int textureCoordinateAttribLocation = glGetAttribLocation(tetrisPieceShaderProgram.getProgramId(), "textureCoordinate");
