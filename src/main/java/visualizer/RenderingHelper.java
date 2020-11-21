@@ -1,6 +1,7 @@
 package visualizer;
 
 import game.Game;
+import game.Game.State;
 import logic.Piece;
 import logic.Piece.PieceType;
 import logic.Sprite;
@@ -22,22 +23,67 @@ public class RenderingHelper {
     private int clearEffectTimer = 0;
     private int dropEffectTimer = 0;
     private int gameOverEffectTimer = 0;
-
     private float effectYChange = 0;
+    private State previousState;
 
     public RenderingHelper(Renderer renderer) {
         this.renderer = renderer;
     }
 
-    public void drawWorld(World world, Game.State state) {
+    public void drawWorld(World world, State state) {
+
+        updateLogic(world, state);
+
+        // Reset
+        renderer.reset();
+
+        // Draw
+        if(state == State.Running) {
+            drawStage();
+            drawPlacedPieces(world.getPlacedSquares());
+            drawNextBlockBox(world.getNextPieceType());
+            drawStoredBlockBox(world.getStoredPieceType());
+            drawCurrentPiece(world.getCurrentPiece());
+        }
+        else if(state == State.GameOver) {
+            if(gameOverEffectTimer > 0) {
+                drawStage();
+                drawPlacedPieces(world.getPlacedSquares());
+                drawNextBlockBox(world.getNextPieceType());
+                drawStoredBlockBox(world.getStoredPieceType());
+                drawCurrentPiece(world.getCurrentPiece());
+            }
+            drawGameOverScreen();
+        }
+        else if(state == State.MainMenu) {
+            drawMainMenu();
+        }
+
+        // Swap color buffers
+        renderer.draw();
+    }
+
+    private void updateLogic(World world, State newState) {
 
         // Logic
+        if(previousState == State.Running && newState == State.GameOver) {
+            gameOverEffectTimer = 60;
+        }
+
         if(world.wasRowCleared())
             clearEffectTimer = 8;
         else if(world.wasPieceHardened())
             dropEffectTimer = 6;
 
-        if(clearEffectTimer > 0) {
+        if(gameOverEffectTimer > 0) {
+            gameOverEffectTimer--;
+            effectYChange = (float) Math.pow(gameOverEffectTimer - 60f, 2f) / 1200f;
+            if(dropEffectTimer != 0)
+                dropEffectTimer = 0;
+            if(clearEffectTimer != 0)
+                clearEffectTimer = 0;
+        }
+        else if(clearEffectTimer > 0) {
             clearEffectTimer--;
             effectYChange = clearEffectTimer * (clearEffectTimer - 8f) / 400f;
             if(dropEffectTimer != 0)
@@ -48,33 +94,8 @@ public class RenderingHelper {
             effectYChange = dropEffectTimer * (dropEffectTimer - 6f) / 800f;
         }
 
-        // Reset
-        renderer.reset();
+        previousState = newState;
 
-        // Draw
-        switch(state) {
-            case Running: {
-
-                drawStage();
-                drawPlacedPieces(world.getPlacedSquares());
-                drawNextBlockBox(world.getNextPieceType());
-                drawStoredBlockBox(world.getStoredPieceType());
-                drawCurrentPiece(world.getCurrentPiece());
-
-                break;
-            }
-            case GameOver: {
-                drawGameOverScreen();
-                break;
-            }
-            case MainMenu: {
-                drawMainMenu();
-                break;
-            }
-        }
-
-        // Swap color buffers
-        renderer.draw();
     }
 
     private void drawSquare(int x, int y, int colorIndex, boolean ghostBlock) {
@@ -130,21 +151,25 @@ public class RenderingHelper {
 
     private void drawGameOverScreen() {
 
+        float widthMultiplier = (30-gameOverEffectTimer)/30f;
+        if(widthMultiplier < 0)
+            widthMultiplier = 0;
+
         renderer.drawImage(
                 0,
                 0.1f,
-                0.8f,
-                0.8f*renderer.gameOverTexture.height/renderer.gameOverTexture.width,
-                0,
+                0.8f*widthMultiplier,
+                0.8f*widthMultiplier*renderer.gameOverTexture.height/renderer.gameOverTexture.width,
+                gameOverEffectTimer/4f,
                 renderer.gameOverTexture.textureHandle
         );
 
         renderer.drawImage(
                 0,
                 -0.15f,
-                0.6f,
-                0.6f*renderer.pressContinueTexture.height/renderer.pressContinueTexture.width,
-                0,
+                0.6f*widthMultiplier,
+                0.6f*widthMultiplier*renderer.pressContinueTexture.height/renderer.pressContinueTexture.width,
+                gameOverEffectTimer/4f,
                 renderer.pressContinueTexture.textureHandle
         );
     }

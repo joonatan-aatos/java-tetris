@@ -26,8 +26,8 @@ void main() {
     scaleMatrix[1][0] = 0.0;
     scaleMatrix[1][1] = scaleY;
 
-    vec2 newPosition = rotationMatrix * vec2(position.x, position.y);
-    newPosition = scaleMatrix * newPosition;
+    vec2 newPosition = scaleMatrix * vec2(position.x, position.y);
+    newPosition = rotationMatrix * newPosition;
     newPosition = newPosition + offset;
 
     gl_Position = vec4(newPosition, position.z, 1.0);
