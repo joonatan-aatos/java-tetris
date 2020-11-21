@@ -69,7 +69,9 @@ public class RenderingHelper {
         if(previousState == State.Running && newState == State.GameOver) {
             gameOverEffectTimer = 60;
         }
-
+        if(newState != State.GameOver && gameOverEffectTimer != 0) {
+            gameOverEffectTimer = 0;
+        }
         if(world.wasRowCleared())
             clearEffectTimer = 8;
         else if(world.wasPieceHardened())

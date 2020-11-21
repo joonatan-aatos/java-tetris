@@ -176,8 +176,13 @@ public class Renderer {
 
 		// Resize the viewport if necessary
 		if(window.isResized()) {
-			glViewport(0, 0, window.getWidth(), window.getHeight());
-			window.setResized(true);
+			if(window.getWidth() > window.getHeight()) {
+				glViewport((window.getWidth()-window.getHeight())/2, 0, window.getHeight(), window.getHeight());
+			}
+			else {
+				glViewport(0, (window.getHeight()-window.getWidth())/2, window.getWidth(), window.getWidth());
+			}
+			window.setResized(false);
 		}
 	}
 
