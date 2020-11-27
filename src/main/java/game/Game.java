@@ -1,5 +1,7 @@
 package game;
 
+import audio.AudioPlayer;
+import audio.Sound;
 import engine.EngineInterface;
 import engine.GameInterface;
 import logic.World;
@@ -17,6 +19,7 @@ public class Game implements GameInterface, VisualizerToGameInterface, WorldToGa
 
     private final Visualizer visualizer;
     private final KeyListener keyListener;
+    private final AudioPlayer audioPlayer;
     private final World world;
 
     private State state;
@@ -27,6 +30,7 @@ public class Game implements GameInterface, VisualizerToGameInterface, WorldToGa
     public Game(KeyListener keyListener) {
         visualizer = new Visualizer(this);
         this.keyListener = keyListener;
+        audioPlayer = new AudioPlayer();
         world = new World(this);
         visualizer.getWindow().setKeyCallback(keyListener);
         addKeyListener(this);
@@ -82,8 +86,10 @@ public class Game implements GameInterface, VisualizerToGameInterface, WorldToGa
         // Space
         if(key == 32) {
             if(action == 1) {
-                if(state == State.GameOver)
+                if(state == State.GameOver) {
                     state = State.MainMenu;
+                    audioPlayer.stopSound(Sound.Main_Theme);
+                }
                 else if(state == State.MainMenu)
                     startNewGame();
             }
@@ -93,6 +99,7 @@ public class Game implements GameInterface, VisualizerToGameInterface, WorldToGa
     private void startNewGame() {
         world.reset();
         state = State.Running;
+        audioPlayer.loopSound(Sound.Main_Theme);
     }
 
     public enum State {
