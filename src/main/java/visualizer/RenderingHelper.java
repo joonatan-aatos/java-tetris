@@ -44,6 +44,7 @@ public class RenderingHelper {
             drawNextBlockBox(world.getNextPieceType());
             drawStoredBlockBox(world.getStoredPieceType());
             drawCurrentPiece(world.getCurrentPiece());
+            drawScore(world.getScore());
         }
         else if(state == State.GameOver) {
             if(gameOverEffectTimer > 0) {
@@ -149,6 +150,14 @@ public class RenderingHelper {
                 colors,
                 1f
         );
+    }
+
+    private void drawScore(int score) {
+
+        String scoreString = Integer.toString(score);
+        for(int i = 0; i < scoreString.length(); i++) {
+            drawNumber(Integer.parseInt(Character.toString(scoreString.charAt(i))), -0.7f + i*0.12f, -0.6f, 0.06f, new float[]{0.7f, 0.7f, 0.7f, 1f});
+        }
     }
 
     private void drawGameOverScreen() {
@@ -345,6 +354,33 @@ public class RenderingHelper {
                 }
             }
         }
+    }
+
+    private void drawNumber(int number, float xPos, float yPos, float width, float[] color) {
+
+        if(number < 0 || number > 9)
+            throw new IllegalArgumentException("Only numbers that are one digit long can be drawn. Number given: "+number);
+
+        float widthMultiplier = 0.2f;
+
+        // Draw horizontal lines
+        if(number != 1 && number != 4)
+            renderer.drawRectangle(xPos, yPos, width + width*widthMultiplier, width*widthMultiplier, color);
+        if(number != 0 && number != 1 && number != 7)
+            renderer.drawRectangle(xPos, yPos + -1*width, width + width*widthMultiplier, width*widthMultiplier, color);
+        if(number != 1 && number != 4 && number != 7)
+            renderer.drawRectangle(xPos, yPos + -2*width, width + width*widthMultiplier, width*widthMultiplier, color);
+
+        // Draw vertical lines
+        if(number != 1 && number != 2 && number != 3 && number != 7)
+            renderer.drawRectangle(xPos, yPos, width*widthMultiplier, width + width*widthMultiplier, color);
+        if(number != 5 && number != 6)
+            renderer.drawRectangle(xPos + width, yPos, width*widthMultiplier, width + width*widthMultiplier, color);
+        if(number != 1 && number != 3 && number != 4 && number != 5 && number != 7 && number != 9)
+            renderer.drawRectangle(xPos, yPos - width, width*widthMultiplier, width + width*widthMultiplier, color);
+        if(number != 2)
+            renderer.drawRectangle(xPos + width, yPos -width, width*widthMultiplier, width + width*widthMultiplier, color);
+
     }
 
     private float[] convertSpriteCoords(int x, int y) {

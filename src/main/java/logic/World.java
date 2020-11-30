@@ -263,6 +263,10 @@ public class World {
         return storedPieceType;
     }
 
+    public int getScore() {
+        return rowsCleared;
+    }
+
     public boolean wasRowCleared() {
         return rowCleared;
     }
