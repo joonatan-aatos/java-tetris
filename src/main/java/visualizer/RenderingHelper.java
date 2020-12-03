@@ -154,9 +154,10 @@ public class RenderingHelper {
 
     private void drawScore(int score) {
 
+        float textSize = 0.06f;
         String scoreString = Integer.toString(score);
         for(int i = 0; i < scoreString.length(); i++) {
-            drawNumber(Integer.parseInt(Character.toString(scoreString.charAt(i))), -0.7f + i*0.12f, -0.6f, 0.06f, new float[]{0.7f, 0.7f, 0.7f, 1f});
+            drawNumber(Integer.parseInt(Character.toString(scoreString.charAt(i))), stageWidth*3f/5f + i*0.12f, 1-stageHeight+textSize, textSize, new float[]{0.7f, 0.7f, 0.7f, 1f});
         }
     }
 
