@@ -14,7 +14,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public enum Sound {
 	
-	Main_Theme("/audio/TetrisTheme.wav");
+	Main_Theme("/audio/TetrisTheme.wav"),
+	Place_Sound("/audio/tetrisPlaceSound.wav"),
+	Clear_Sound("/audio/tetrisClearSound.wav");
+
 
 	private String path;
 	private Clip clip;
@@ -28,13 +31,14 @@ public enum Sound {
 			
 			InputStream stream = this.getClass().getResourceAsStream(path);
 			BufferedInputStream bufferedStream = new BufferedInputStream(stream);
-			AudioInputStream audioStream;
-			audioStream = AudioSystem.getAudioInputStream(bufferedStream);
+			AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedStream);
 			clip = AudioSystem.getClip();
 			clip.open(audioStream);
-			
-			muteControl = (BooleanControl) clip.getControl(BooleanControl.Type.MUTE);
-			
+
+			if(clip.isControlSupported(BooleanControl.Type.MUTE)) {
+				muteControl = (BooleanControl) clip.getControl(BooleanControl.Type.MUTE);
+			}
+
 		} catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
 			e.printStackTrace();
 		}

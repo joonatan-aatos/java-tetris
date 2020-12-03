@@ -1,5 +1,8 @@
 package logic;
 
+import audio.AudioPlayer;
+import audio.Sound;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,6 +29,7 @@ public class World {
     // Other
     private final double fallSpeedMultiplier = 60d/Math.log(201);
 
+    private final AudioPlayer audioPlayer;
     private int[][] placedSquares;
     private Piece currentPiece;
     private Piece.PieceType storedPieceType;
@@ -40,9 +44,10 @@ public class World {
     private boolean pieceHardened;
     private boolean gameEnded;
 
-    public World(WorldToGameInterface game) {
+    public World(WorldToGameInterface game, AudioPlayer audioPlayer) {
 
         this.game = game;
+        this.audioPlayer = audioPlayer;
         init();
         game.addKeyListener(tetrisPlayer);
     }
@@ -87,10 +92,15 @@ public class World {
     // Called every time the world should update
     public void tick() {
 
-        if(rowCleared)
+        if(rowCleared) {
             rowCleared = false;
-        if(pieceHardened)
+            audioPlayer.playSound(Sound.Clear_Sound);
+        }
+        if(pieceHardened) {
             pieceHardened = false;
+            if(!rowCleared)
+                audioPlayer.playSound(Sound.Place_Sound);
+        }
 
         if(currentPiece == null)
             createNewPiece();

@@ -31,7 +31,7 @@ public class Game implements GameInterface, VisualizerToGameInterface, WorldToGa
         visualizer = new Visualizer(this);
         this.keyListener = keyListener;
         audioPlayer = new AudioPlayer();
-        world = new World(this);
+        world = new World(this, audioPlayer);
         visualizer.getWindow().setKeyCallback(keyListener);
         addKeyListener(this);
     }
